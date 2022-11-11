@@ -10,6 +10,9 @@
 
 /* ----- Cached elements ----- */
 
+const playerBoardEl = document.getElementById('playerboard');
+console.dir(playerBoardEl);
+
 /*
 
 
