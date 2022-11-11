@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+:root {
+    --accent-dark: #BB4C3A;
+    --accent-light: #FDD39C;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+  
+header {
+    font-size: 6vmin;
+    padding: 1vmin;
+    background-color: var(--accent-dark);
+    color: white;
+    text-align: center;
+    letter-spacing: .5vmin;
+}
+  
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameboards {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.board {
+    display: grid;
+    grid-template-rows: repeat(10, 5vmin);
+    grid-template-columns: repeat(10,5vmin);
+}
+
+.board > div {
+    border: black solid 1px;
+}
+
+.board > div:hover {
+    border: grey solid 1px;
+}
