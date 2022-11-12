@@ -33,10 +33,21 @@ main {
 
 main > div {
     display: grid;
-    grid-template-columns: 100px 500px 50px 500px 100px;
+    grid-template-columns: 110px 500px 50px 500px 110px;
     gap:  10px;
     align-items: center;
     justify-items: center;
+}
+
+#gameboards {
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+#score {
+    font-size: 1.5vmin;
 }
 
 .board {
@@ -51,6 +62,23 @@ main > div {
 
 .board > div:hover {
     border: grey solid 1px;
+}
+
+#countdown {
+    font-size: 5vmin;
+    font-weight: 900; 
+    height: 7.5vmin;
+    width: 7.5vmin;
+    text-align: center;
+}
+
+.turn {
+    border-radius: 5px;
+    border: black solid 1px;
+    background-color: var(--accent-light);
+    color: black;
+    padding: 2vmin;
+    font-weight: 700;
 }
 
 #playerturn {
@@ -74,18 +102,21 @@ main > div {
     justify-content: space-between;
     align-items: baseline;
     align-content: space-between;
-    padding: 0px 30px 0px 30px;
     height: 100px;
 }
 
 .ship{
     display: grid;
-    border: black solid 1px;
     grid-template-rows: 40px;
+    margin: 0px 20px 0px 20px;
 }
 
 #playerships > .ship {
     background-color: grey;
+}
+
+.ship > div {
+    border: black solid 1px;
 }
 
 .carrier {
@@ -106,4 +137,9 @@ main > div {
 
 .submarine {
     grid-template-columns: repeat(3,  40px);
+}
+
+.countingdown {
+    border-radius: 50%;
+    border: solid 1vmin var(--accent-light);
 }
