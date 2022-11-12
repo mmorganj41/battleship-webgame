@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script defer src="js/app.js"></script>
 </head>
 <body>
@@ -225,15 +226,31 @@
             </div>
         </div>
         <div id="turns">
-            <div class="turn" id="playerturn"></div>
-            <div class="turn" id="computerturn"></div>
+            <div class="turn" id="playerturn">Turn</div>
+            <div class="turn" id="computerturn">Turn</div>
+        </div>
         <div id="actions">
-            <div id="orientation"></div>
-            <div class="ships" id="playerships"></div>
-            <button id="fire"></button>
-            <div class="ships" id="computerships"></div>
+            <div id="orientation"><h4>Orientation</h4>
+            <i class="fa fa-arrow-circle-o-right fa-3x"></i>
+            </div>
+            <div class="ships" id="playerships">
+                <div class="ship carrier"></div>
+                <div class="ship battleship"></div>
+                <div class="ship destroyer"></div>
+                <div class="ship cruiser"></div>
+                <div class="ship submarine"></div>
+            </div>
+            <button id="fire">FIRE!</button>
+            <div class="ships" id="computerships">
+                <div class="ship carrier"></div>
+                <div class="ship battleship"></div>
+                <div class="ship destroyer"></div>
+                <div class="ship cruiser"></div>
+                <div class="ship submarine"></div>
+            </div>
+        </div>
     </div>
-    <button id="Reset"></button>
+    <button id="Reset">Reset</button>
     </main>
 </body>
 </html>

@@ -4,8 +4,8 @@
 }
 
 :root {
-    --accent-dark: #BB4C3A;
-    --accent-light: #FDD39C;
+    --accent-dark: #3a54bb;
+    --accent-light: #d3e376;
 }
 
 body {
@@ -27,20 +27,22 @@ header {
 main {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
 }
 
-#gameboards {
-    display: flex;
-    justify-content: space-between;
+main > div {
+    display: grid;
+    grid-template-columns: 100px 500px 50px 500px 100px;
+    gap:  10px;
     align-items: center;
+    justify-items: center;
 }
 
 .board {
     display: grid;
-    grid-template-rows: repeat(10, 5vmin);
-    grid-template-columns: repeat(10,5vmin);
+    grid-template-rows: repeat(10,  40px);
+    grid-template-columns: repeat(10,  40px);
 }
 
 .board > div {
@@ -49,4 +51,59 @@ main {
 
 .board > div:hover {
     border: grey solid 1px;
+}
+
+#playerturn {
+    grid-column-start: 2;
+}
+
+#computerturn {
+    grid-column-start: 4;
+}
+
+#orientation {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.ships {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    align-content: space-between;
+    padding: 0px 30px 0px 30px;
+    height: 100px;
+}
+
+.ship{
+    display: grid;
+    border: black solid 1px;
+    grid-template-rows: 40px;
+}
+
+#playerships > .ship {
+    background-color: grey;
+}
+
+.carrier {
+    grid-template-columns: repeat(5, 40px);
+}
+
+.battleship {
+    grid-template-columns: repeat(4,  40px);
+}
+
+.destroyer {
+    grid-template-columns: repeat(2,  40px);
+}
+
+.cruiser {
+    grid-template-columns: repeat(3,  40px);
+}
+
+.submarine {
+    grid-template-columns: repeat(3,  40px);
 }
