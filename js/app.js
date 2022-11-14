@@ -92,6 +92,7 @@ let firingSquare;
 const playerBoardEl = document.querySelectorAll('#playerboard > div');
 const computerBoardEl = document.querySelectorAll('#computerboard > div');
 const playerShipEls = document.getElementById('playerships');
+const computerShipEls = document.getElementById('computerships');
 const messageEl = document.getElementById('message');
 const fireButtonEl = document.getElementById('fire');
 const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
@@ -188,6 +189,7 @@ fireButtonEl.addEventListener('click', event => {
             value.hit = true;
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
+                computerHitCounter[value.ship]++
             } else {
                 message = `Miss.`
             }
@@ -390,6 +392,7 @@ function init(){
         computerHitCounter[key] = 0;
     }
 
+
     // clear firing square
     firingSquare = null;
 
@@ -403,6 +406,8 @@ function render(){
 
     renderBoardEls(playerBoard, playerBoardEl);
     renderBoardEls(computerBoard, computerBoardEl);
+
+    renderHitTrack();
     
     fireButtonEl.innerText = (setup) ? "Start" : "FIRE!";
 
@@ -452,6 +457,37 @@ function renderTurn() {
     } else {
         computerTurnEl.classList.add('visible');
         playerTurnEl.classList.remove('visible');
+    }
+}
+
+// Render hit indicators on bottom ship elements
+
+function renderHitTrack() {
+    for (let indicator of playerShipEls.children) {
+        indicator.classList.remove('sunk');
+        for (descendent of indicator.children) {
+            descendent.classList.remove('damage')
+        }
+        if (playerHitCounter[indicator.classList[1]] >= shipLengths.get(indicator.classList[1])) {
+            indicator.classList.add('sunk');
+        } else {
+            for (i = 0; i<playerHitCounter[indicator.classList[1]]; i++) {
+                indicator.children[i].classList.add('damage');    
+            }
+        }
+    }
+    for (let indicator of computerShipEls.children) {
+        indicator.classList.remove('sunk');
+        for (descendent of indicator.children) {
+            descendent.classList.remove('damage')
+        }
+        if (computerHitCounter[indicator.classList[1]] >= shipLengths.get(indicator.classList[1])) {
+            indicator.classList.add('sunk');
+        } else {
+            for (i = 0; i<computerHitCounter[indicator.classList[1]]; i++) {
+                indicator.children[i].classList.add('damage');    
+            }
+        }
     }
 }
 
