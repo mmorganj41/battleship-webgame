@@ -35,13 +35,13 @@ const placements = {
 }
 
 // length definitions
-const shipLengths = {
-    carrier: 5,
-    battleship: 4,
-    destroyer: 2,
-    submarine: 3,
-    cruiser: 3,
-}
+const shipLengths = new Map();
+
+shipLengths.set('destroyer', 2);
+shipLengths.set('submarine', 3);
+shipLengths.set('cruiser', 3);
+shipLengths.set('battleship', 4);
+shipLengths.set('carrier', 5);
 
 
 /* ----- States ----- */
@@ -76,6 +76,7 @@ const playerShipEls = document.getElementById('playerships');
 const messageEl = document.getElementById('message');
 const fireButtonEl = document.getElementById('fire');
 const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
+const resetButtonEl = document.getElementById('reset');
 
 // Adding drag events
 
@@ -122,6 +123,8 @@ playerBoardEl.forEach(element => {
     })
 })
 
+resetButtonEl.addEventListener('click', init)
+
 // remove set ships if placed incorrectly by clicking
 
 playerShipEls.addEventListener('click', (event) => {
@@ -166,11 +169,11 @@ function canPlace(event, board, update = false) {
     let tempArray = [];
     // alter check based on ship orientation;
     if (orient) {
-        for (let i = 0; i<shipLengths[draggedElement]; i++) {
+        for (let i = 0; i<shipLengths.get(draggedElement); i++) {
             tempArray.push((board[row+i] === undefined) ? undefined : board[row+i][column]);
         }
     } else {
-        for (let i = 0; i<shipLengths[draggedElement]; i++) {
+        for (let i = 0; i<shipLengths.get(draggedElement); i++) {
             tempArray.push((board[row][column + i]));
         }
     }
@@ -185,6 +188,39 @@ function canPlace(event, board, update = false) {
     }
 
 }
+
+//  checks to see if AI can place ship at row and column, updates board and available squares depending
+function canAIPlace(row, column, board, orientation, ship) {
+    let tempArray = [];
+    if (orientation) {
+        for (let i = 0; i<shipLengths.get(ship); i++) {
+            tempArray.push((board[row+i] === undefined) ? undefined : board[row+i][column]);
+        }
+    } else {
+        for (let i = 0; i<shipLengths.get(ship); i++) {
+            tempArray.push((board[row][column + i]));
+        }
+    }
+
+    if (tempArray.every(e => e !== undefined && e.ship === null) ) {
+        tempArray.map(e => e.ship = ship);
+        return true;
+        
+    } else {
+        return false;
+    }
+}
+
+
+// potential for future use
+// function getIndexOfNested(arr, row, col) {
+//     for (let i = 0; i < arr.length; i++) {
+//         let index = arr[i].findIndex(e => e[0] === row && e[1] === col);
+//         if (index > -1) {
+//             return [i, index];
+//         }
+//     }
+// }
 
 function updatePlacement() {
     placements[draggedElement] = true;
@@ -204,14 +240,43 @@ function removeShip(event, board) {
 
 // place AI ships function
 function placeAIShips() {
-    const availableSquares = computerBoard.reduce((array, row) => {
-        array.concat(row.map(element => {
-            element.name
-            return element.name;
-        }))
-        return array;
-    }, [])
-    console.log(availableSquares)
+    
+    // for future use if want to optimize randomization 
+    // const availableSquaresOrient = computerBoard.map((row, i) => {
+    //     return (row.map((element, j) => {
+    //         return [i, j];
+    //     }))
+    // })
+
+    
+    // const availableSquaresNorm = computerBoard.map((col, i) => {
+    //     return (col.map((element, j) => {
+    //         return [j, i];
+    //     }))
+    // })
+
+    for (let [key, value] of shipLengths) {
+        while (true) {
+            let row;
+            let col;
+            let randOrient = !!Math.floor(Math.random()*2);
+            if (randOrient) {
+                // ignore rows that will have ship off the board
+                row = Math.floor(Math.random()*(computerBoard.length+1-value));
+                col = Math.floor(Math.random()*computerBoard[row].length);
+                if (canAIPlace(row, col, computerBoard, randOrient, key)) {
+                    break;
+                } 
+            } else {
+                col = Math.floor(Math.random()*(computerBoard.length+1-value));
+                row = Math.floor(Math.random()*computerBoard[col].length);
+                if (canAIPlace(row, col, computerBoard, randOrient, key)) {
+                    break;
+                } 
+            }
+        }
+    }
+    render()
 }
 
 /* ----- Main Functions ----- */
@@ -249,9 +314,11 @@ function init(){
     computerBoard.forEach(row => {
         row.forEach(element => {
             element.ship = null;
-            element.hit = true;
+            element.hit = false;
         })
     })
+
+    placeAIShips()
 
     render();
 }
