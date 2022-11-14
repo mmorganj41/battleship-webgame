@@ -24,6 +24,16 @@ for (let i = 0; i<computerBoard.length; i++) {
     }
 }
 
+// placement array
+
+const placements = {
+    carrier: false,
+    battleship: false,
+    destroyer: false,
+    submarine: false,
+    cruiser: false,
+}
+
 
 /* ----- States ----- */
 // Turn switch and turn #
@@ -38,11 +48,6 @@ let message;
 let orient = false;
 let dragLength;
 let draggedElement;
-let cruiserPlaced;
-let carrierPlaced;
-let destroyerPlaced;
-let subPlaced;
-let battleshipPlaced;
 
 
 
@@ -61,6 +66,8 @@ const playerBoardEl = document.querySelectorAll('#playerboard > div');
 const computerBoardEl = document.querySelectorAll('#computerboard > div');
 const playerShipEls = document.getElementById('playerships');
 const messageEl = document.getElementById('message');
+const fireButtonEl = document.getElementById('fire');
+const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
 
 // Adding drag events
 
@@ -68,7 +75,6 @@ playerShipEls.addEventListener('dragstart', (event) => {
     event.target.classList.add("dragging");
     dragLength = event.target.children.length;
     draggedElement = event.target.classList[1];
-    console.log(draggedElement);
 })
 
 playerShipEls.addEventListener('dragend', (event) => {
@@ -80,17 +86,18 @@ playerShipEls.addEventListener('dragend', (event) => {
 playerBoardEl.forEach(element => {
     element.addEventListener('dragover', (event) => {
         event.preventDefault();
+        if (placements[draggedElement] === true) return;
         if (canPlace(event, playerBoard)) {
             event.target.classList.add("filling");
         } else {
             event.target.classList.add("cantfill");
-            console.dir(event);
         }
     });
 });
 
 playerBoardEl.forEach(element => {
     element.addEventListener("dragleave", (event) => {
+        if (placements[draggedElement] === true) return;
         event.target.classList.remove("filling");
         event.target.classList.remove("cantfill")
     });
@@ -98,12 +105,30 @@ playerBoardEl.forEach(element => {
 
 playerBoardEl.forEach(element => {
     element.addEventListener("drop", (event) => {
+        if (placements[draggedElement] === true) return;
         event.target.classList.remove("filling");
         event.target.classList.remove("cantfill")
-
-        render();
-
+        if (canPlace(event, playerBoard, true)) {
+            updatePlacement();
+            // if (Object.values(placements).every(e => e === true)) setup = false;
+            render();
+        }
     })
+})
+
+// remove set ships if placed incorrectly by clicking
+
+playerShipEls.addEventListener('click', (event) => {
+    if (!(event.target.parentNode.classList.contains('placed')) || setup === false) return;
+    removeShip(event, playerBoard);
+    render();
+})
+
+// rotate orientation by clicking
+
+orientationIconEl.addEventListener('click', (event) => {
+    event.target.classList.toggle('fa-rotate-90');
+    orient = (event.target.classList.contains('fa-rotate-90'));
 })
 
 /*
@@ -128,7 +153,7 @@ function getArrayCoordinates(element, array) {
     }
 }
 
-function canPlace(event, board) {
+function canPlace(event, board, update = false) {
     const [row, column] = getArrayCoordinates(event.target, board);
 
     // construct temp array to check for ships and edges easily
@@ -136,7 +161,7 @@ function canPlace(event, board) {
     // alter check based on ship orientation;
     if (orient) {
         for (let i = 0; i<dragLength; i++) {
-            tempArray.push((board[row + i][column]));
+            tempArray.push((board[row+i] === undefined) ? undefined : board[row+i][column]);
         }
     } else {
         for (let i = 0; i<dragLength; i++) {
@@ -144,17 +169,32 @@ function canPlace(event, board) {
         }
     }
 
-    console.log(tempArray)
     // only place ship if nothing is there
     if (tempArray.every(e => e !== undefined && e.ship === null) ) {
+        if (update) tempArray.map(e => e.ship = draggedElement)
         return true;
-        // tempArray.map(e => e.ship = draggedElement)
+        
     } else {
         return false;
     }
 
 }
 
+function updatePlacement() {
+    placements[draggedElement] = true;
+    const shipEl = document.querySelector('#playerships > .'+draggedElement);
+    shipEl.classList.add('placed');
+}
+
+function removeShip(event, board) {
+    event.target.parentNode.classList.remove('placed');
+    for (let row of board) {
+        for (let element of row) {
+            if (element.ship === event.target.parentNode.classList[1]) element.ship = null;
+        }
+    }
+    placements[event.target.parentNode.classList[1]] = false;
+}
 
 /* ----- Main Functions ----- */
 
@@ -172,11 +212,10 @@ init();
 function init(){
     
     setup = true;
-    cruiserPlaced = false;
-    carrierPlaced = false;
-    destroyerPlaced = false;
-    subPlaced = false;
-    battleshipPlaced = false;
+
+    for (placed in placements) {
+        placements[placed]  = false;
+    }
 
 
     playerTurn = !!Math.floor(Math.random()*2);
@@ -196,9 +235,6 @@ function init(){
         })
     })
 
-    playerBoard[5][5].ship = 'cruiser';
-    computerBoard[5][5].ship = 'cruiser';
-
     render();
 }
 
@@ -208,7 +244,9 @@ function render(){
     renderBoardEls(playerBoard, playerBoardEl);
     renderBoardEls(computerBoard, computerBoardEl);
     
+    fireButtonEl.innerText = (setup) ? "Start" : "FIRE!"
 
+    messageEl.innerText = message;
 
 }
 

@@ -177,3 +177,7 @@ button {
     font-size: 30px;
     font-weight: 900;
 }
+
+#playerships > .placed {
+    background-color: green;
+}
