@@ -24,7 +24,7 @@ for (let i = 0; i<computerBoard.length; i++) {
     }
 }
 
-// placement array
+// placement object
 
 const placements = {
     carrier: false,
@@ -32,6 +32,15 @@ const placements = {
     destroyer: false,
     submarine: false,
     cruiser: false,
+}
+
+// length definitions
+const shipLengths = {
+    carrier: 5,
+    battleship: 4,
+    destroyer: 2,
+    submarine: 3,
+    cruiser: 3,
 }
 
 
@@ -46,7 +55,6 @@ let playerTurn;
 let setup;
 let message;
 let orient = false;
-let dragLength;
 let draggedElement;
 
 
@@ -73,13 +81,11 @@ const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
 
 playerShipEls.addEventListener('dragstart', (event) => {
     event.target.classList.add("dragging");
-    dragLength = event.target.children.length;
     draggedElement = event.target.classList[1];
 })
 
 playerShipEls.addEventListener('dragend', (event) => {
     event.target.classList.remove("dragging");
-    dragLength = undefined;
     draggedElement = undefined;
 })
 
@@ -160,11 +166,11 @@ function canPlace(event, board, update = false) {
     let tempArray = [];
     // alter check based on ship orientation;
     if (orient) {
-        for (let i = 0; i<dragLength; i++) {
+        for (let i = 0; i<shipLengths[draggedElement]; i++) {
             tempArray.push((board[row+i] === undefined) ? undefined : board[row+i][column]);
         }
     } else {
-        for (let i = 0; i<dragLength; i++) {
+        for (let i = 0; i<shipLengths[draggedElement]; i++) {
             tempArray.push((board[row][column + i]));
         }
     }
@@ -194,6 +200,18 @@ function removeShip(event, board) {
         }
     }
     placements[event.target.parentNode.classList[1]] = false;
+}
+
+// place AI ships function
+function placeAIShips() {
+    const availableSquares = computerBoard.reduce((array, row) => {
+        array.concat(row.map(element => {
+            element.name
+            return element.name;
+        }))
+        return array;
+    }, [])
+    console.log(availableSquares)
 }
 
 /* ----- Main Functions ----- */
