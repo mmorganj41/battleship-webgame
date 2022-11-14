@@ -192,3 +192,19 @@ button {
 .visible {
     display: block;
 }
+
+#playerships .damage {
+    background-color: red;
+}
+
+#playerships > .sunk {
+    background-color: maroon;
+}
+
+#computerships .damage {
+    background-color: lightgreen;
+}
+
+#computerships > .sunk {
+    background-color: green;
+}
