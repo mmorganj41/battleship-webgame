@@ -161,7 +161,8 @@ main > div {
     background-color: pink;
 }
 
-#playerboard > .hittable {
+/* remove #playerboards > for debugging */
+.hittable {
     background-color: grey;
 }
 
