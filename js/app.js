@@ -34,6 +34,24 @@ const placements = {
     cruiser: false,
 }
 
+// player and computer ship hit counter
+
+const playerHitCounter = {
+    carrier: 0,
+    battleship: 0,
+    destroyer: 0,
+    submarine: 0,
+    cruiser: 0,
+}
+
+const computerHitCounter = {
+    carrier: 0,
+    battleship: 0,
+    destroyer: 0,
+    submarine: 0,
+    cruiser: 0,
+}
+
 // length definitions
 const shipLengths = new Map();
 
@@ -365,6 +383,12 @@ function init(){
 
     // place ships for computer
     placeAIShips()
+
+    // reset hitCounters
+    for (let key in playerHitCounter) {
+        playerHitCounter[key] = 0;
+        computerHitCounter[key] = 0;
+    }
 
     // clear firing square
     firingSquare = null;
