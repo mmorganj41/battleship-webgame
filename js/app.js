@@ -56,6 +56,7 @@ let setup;
 let message;
 let orient = false;
 let draggedElement;
+let firingSquare;
 
 
 
@@ -140,10 +141,26 @@ orientationIconEl.addEventListener('click', (event) => {
     orient = (event.target.classList.contains('fa-rotate-90'));
 })
 
-/*
+// FIRING!!!
 
+computerBoardEl.forEach(e => e.addEventListener('click', event => {
+    // set firing square to the id of target div
+    console.log(event.target, 'got touched')
+    firingSquare = event.target.id;
+    console.log(firingSquare)
+    
+    render();
+}))
 
-*/
+fireButtonEl.addEventListener('click', event => {
+    if (Object.values(placements).every(e => e === true) && setup === true) {
+        setup = false;
+        message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
+    }
+
+    firingSquare = null;
+    render();
+})
 
 
 /* ----- Callback Functions ------ */
@@ -296,11 +313,12 @@ function init(){
     
     setup = true;
 
+    // clear placement object
     for (placed in placements) {
         placements[placed]  = false;
     }
 
-
+    // randomly deterine who moves first
     playerTurn = !!Math.floor(Math.random()*2);
 
     message = 'Setup your board!'
@@ -318,18 +336,22 @@ function init(){
         })
     })
 
+    // place ships for computer
     placeAIShips()
 
+    // clear firing square
+    firingSquare = null;
+
+    // update model
     render();
 }
 
 function render(){
     
-
     renderBoardEls(playerBoard, playerBoardEl);
     renderBoardEls(computerBoard, computerBoardEl);
     
-    fireButtonEl.innerText = (setup) ? "Start" : "FIRE!"
+    fireButtonEl.innerText = (setup) ? "Start" : "FIRE!";
 
     messageEl.innerText = message;
 
@@ -355,6 +377,13 @@ function renderBoardEls(array, boardEl) {
                 } else {
                     boardEl[node].classList.add('miss');
                 }
+            }
+            // render firing square
+            if (boardEl[node].id === firingSquare) {
+                boardEl[node].classList.add('firingsquare');
+                console.dir(boardEl[node])
+            } else {
+                boardEl[node].classList.remove('firingsquare');
             }
             node++;
         })

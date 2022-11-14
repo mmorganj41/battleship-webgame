@@ -59,7 +59,7 @@ main > div {
     border: black solid 1px;
 }
 
-.board > div:hover {
+#computerboard > div:hover {
     border: rgb(189, 189, 189) solid 1px;
 }
 
@@ -181,4 +181,8 @@ button {
 
 #playerships > .placed {
     background-color: green;
+}
+
+#computerboard > .firingsquare {
+    border: solid yellow 2px;
 }
