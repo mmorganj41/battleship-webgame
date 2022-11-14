@@ -77,7 +77,9 @@ main > div {
     background-color: var(--accent-light);
     color: black;
     padding: 2vmin;
+    margin: 2vmin;
     font-weight: 700;
+    display: none;
 }
 
 #playerturn {
@@ -185,4 +187,8 @@ button {
 
 #computerboard > .firingsquare {
     border: solid yellow 2px;
+}
+
+.visible {
+    display: block;
 }

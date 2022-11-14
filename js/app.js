@@ -78,6 +78,8 @@ const messageEl = document.getElementById('message');
 const fireButtonEl = document.getElementById('fire');
 const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
 const resetButtonEl = document.getElementById('reset');
+const playerTurnEl = document.getElementById('playerturn');
+const computerTurnEl = document.getElementById('computerturn');
 
 // Adding drag events
 
@@ -145,20 +147,36 @@ orientationIconEl.addEventListener('click', (event) => {
 
 computerBoardEl.forEach(e => e.addEventListener('click', event => {
     // set firing square to the id of target div
-    console.log(event.target, 'got touched')
     firingSquare = event.target.id;
-    console.log(firingSquare)
     
     render();
 }))
 
 fireButtonEl.addEventListener('click', event => {
-    if (Object.values(placements).every(e => e === true) && setup === true) {
+    // if game is still in setup and all ships are on the board start the game
+    if (Object.values(placements).every(e => e === true) && setup) {
         setup = false;
         message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
     }
 
-    firingSquare = null;
+    // act as confirmation for shot if it's players turn
+    if (playerTurn && !setup) {
+        let value = findfromName(computerBoard, firingSquare);
+        if (value === undefined) {
+            message = 'Select a valid square';
+        } else if (value.hit === true) {
+            message = 'Choose a new square';
+        } else {
+            value.hit = true;
+            if (value.ship !== null) {
+                message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
+            } else {
+                message = `Miss.`
+            }
+        }
+        firingSquare = null;
+    }
+
     render();
 })
 
@@ -169,6 +187,15 @@ fireButtonEl.addEventListener('click', event => {
 // Selection of square to fire upon
 // Firer button function - checks if square has ship and if true updates the ships on bottom
 
+
+function findfromName(arr, name) {
+    for (let i = 0; i < arr.length; i++) {
+        let value = arr[i].find(e => e.name === name);
+        if (value !== undefined) {
+            return value;
+        }
+    }
+}
 
 // Get the array indices by matching the DOM element id to the array index name property
 function getArrayCoordinates(element, array) {
@@ -348,6 +375,8 @@ function init(){
 
 function render(){
     
+    renderTurn();
+
     renderBoardEls(playerBoard, playerBoardEl);
     renderBoardEls(computerBoard, computerBoardEl);
     
@@ -355,6 +384,7 @@ function render(){
 
     messageEl.innerText = message;
 
+    
 }
 
 // function for rendering a board given an array
@@ -381,13 +411,24 @@ function renderBoardEls(array, boardEl) {
             // render firing square
             if (boardEl[node].id === firingSquare) {
                 boardEl[node].classList.add('firingsquare');
-                console.dir(boardEl[node])
             } else {
                 boardEl[node].classList.remove('firingsquare');
             }
             node++;
         })
     })
+}
+
+// render turn indicator
+
+function renderTurn() {
+    if (playerTurn) {
+        playerTurnEl.classList.add('visible');
+        computerTurnEl.classList.remove('visible');
+    } else {
+        computerTurnEl.classList.add('visible');
+        playerTurnEl.classList.remove('visible');
+    }
 }
 
 // Render board elements:
