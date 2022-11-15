@@ -24,6 +24,9 @@ for (let i = 0; i<computerBoard.length; i++) {
     }
 }
 
+// sounds
+const missSound = new Audio('audio/miss.mp3');
+const hitSound = new Audio('audio/hit.mp3');
 
 // placement object
 
@@ -206,7 +209,14 @@ bodyEl.addEventListener('keyup', (event) => {
 function fire(){
     // ensure the computer has moved
     if (haltMoves) return;
+
+    missSound.pause();
+    missSound.currentTime = 0;
     
+
+    hitSound.pause();
+    hitSound.currentTime = 0;
+
     // if game is over, can't play
     if (gameOver) {
         message = 'Game is over, press reset to play again!'
@@ -235,6 +245,7 @@ function fire(){
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
                 computerHitCounter[value.ship]++
+                hitSound.play();
                 
                 if (Object.values(computerHitCounter).reduce((sum, element) => sum + element) >= 17) {
                     gameOver = true;
@@ -243,6 +254,7 @@ function fire(){
                 }
             } else {
                 message = `Miss.`
+                missSound.play()
             }
         }
         firingSquare = null;
@@ -257,7 +269,14 @@ function fire(){
             countdownEl.innerText = delay;
 
             if (delay <= 0) {
+                missSound.pause();
+                missSound.currentTime = 0;
                 
+            
+                hitSound.pause();
+                hitSound.currentTime = 0;
+
+
                 aIFireShot();
                 playerTurn = true;
                 turnCount++;
@@ -430,10 +449,14 @@ function aIFireShot() {
     removeFromSelectionArray(chosenShot);
 
     if (chosenShot.ship !== null) {
+        hitSound.play()
         message = `The computer hit your ${chosenShot.ship} at ${chosenShot.name}.`
         playerHitCounter[chosenShot.ship].push(chosenShot);
+        
     } else {
+        missSound.play()
         message = `The computer chose ${chosenShot.name} and missed.`
+        
     }
 
     render();
