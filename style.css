@@ -51,7 +51,11 @@ main > div {
 }
 
 #score {
-    font-size: 1.5vmin;
+    font-size: 2.5vmin;
+}
+
+span {
+    font-weight: 900;
 }
 
 .board {
