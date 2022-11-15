@@ -178,6 +178,7 @@ orientationIconEl.addEventListener('click', (event) => {
 
 // FIRING!!!
 
+// improve efficiency: forEach -> parent div
 computerBoardEl.forEach(e => e.addEventListener('click', event => {
     // set firing square to the id of target div
     firingSquare = event.target.id;
@@ -203,14 +204,16 @@ bodyEl.addEventListener('keyup', (event) => {
 // Firer button function - checks if square has ship and if true updates the ships on bottom
 
 function fire(){
-    // if game is still in setup and all ships are on the board start the game
+    // ensure the computer has moved
     if (haltMoves) return;
     
+    // if game is over, can't play
     if (gameOver) {
         message = 'Game is over, press reset to play again!'
         return;
     }
 
+    // if game is still in setup and all ships are on the board start the game
     if (Object.values(placements).every(e => e === true) && setup) {
         setup = false;
         message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
@@ -694,6 +697,8 @@ function init(){
             element.hit = false;
         })
     })
+    
+    Array.from(playerShipEls.children).forEach(e => e.classList.remove('placed'));
 
     // place ships for computer
     placeAIShips()
