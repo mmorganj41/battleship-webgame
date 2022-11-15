@@ -79,6 +79,7 @@ let message;
 let orient = false;
 let draggedElement;
 let firingSquare;
+let aIShotsRemaining;
 
 
 
@@ -149,6 +150,8 @@ playerBoardEl.forEach(element => {
     })
 })
 
+// reset game with button
+
 resetButtonEl.addEventListener('click', init)
 
 // remove set ships if placed incorrectly by clicking
@@ -212,6 +215,7 @@ fireButtonEl.addEventListener('click', event => {
 // Firer button function - checks if square has ship and if true updates the ships on bottom
 
 
+// Finds the array element from its name property
 function findfromName(arr, name) {
     for (let i = 0; i < arr.length; i++) {
         let value = arr[i].find(e => e.name === name);
@@ -230,6 +234,7 @@ function getArrayCoordinates(element, array) {
     }
 }
 
+// Check to see if drag event can be dropped
 function canPlace(event, board, update = false) {
     const [row, column] = getArrayCoordinates(event.target, board);
 
@@ -280,7 +285,7 @@ function canAIPlace(row, column, board, orientation, ship) {
 }
 
 
-
+// Returns the indices of an array by its ship property only if its hit property is true (aka it's been fired upon)
 function getIndexOfHit(arr, name) {
     for (let i = 0; i < arr.length; i++) {
         let index = arr[i].findIndex(e => e.hit === true && e.ship === name);
@@ -290,12 +295,14 @@ function getIndexOfHit(arr, name) {
     }
 }
 
+// update ship elements on bottom of screen to indicate if they've been placed
 function updatePlacement() {
     placements[draggedElement] = true;
     const shipEl = document.querySelector('#playerships > .'+draggedElement);
     shipEl.classList.add('placed');
 }
 
+// allow for removal of placed ship elements
 function removeShip(event, board) {
     event.target.parentNode.classList.remove('placed');
     for (let row of board) {
@@ -349,25 +356,40 @@ function placeAIShips() {
 
 // ai for making shots
 function aISelectShot() {
-    for (let key in playerHitCounter) {
-        if (playerHitCounter[key].length === 1) {
-            const anchor = getIndexOfHit(playerBoard, key);
-            while (true) {
-                let randomArray = Math.floor(Math.random()*randomShots.length);
-                let randomAdjacent = playerBoard[anchor[0]+randomArray[0]][anchor[1]+randomArray[1]];
-                if (randomAdjacent.hit) {
-                    return randomAdjacent;
-                } 
-            }
-        } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
-            const anchor = getIndexOfHit(playerBoard, key);
-            if ((playerBoard[anchor[0]+1].name === key && playerBoard[anchor[0]+1].hit === true) || (playerBoard[anchor[0]-1].name === key && playerBoard[anchor[0]-1].hit === true)) {
-                while (true) {
-                    i
-                }
-            } else {
+    let randRow, randCol;
+    // for (let key in playerHitCounter) {
+    //     if (playerHitCounter[key].length === 1) {
+    //         const anchor = getIndexOfHit(playerBoard, key);
+    //         while (true) {
+    //             let randomArray = Math.floor(Math.random()*randomShots.length);
+    //             let randomAdjacent = playerBoard[anchor[0]+randomArray[0]][anchor[1]+randomArray[1]];
+    //             if (randomAdjacent.hit) {
+    //                 return randomAdjacent;
+    //             } 
+    //         }
+    //     } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
+    //         const anchor = getIndexOfHit(playerBoard, key);
+    //         if ((playerBoard[anchor[0]+1].name === key && playerBoard[anchor[0]+1].hit === true) || (playerBoard[anchor[0]-1].name === key && playerBoard[anchor[0]-1].hit === true)) {
+    //             while (true) {
+    //                 i
+    //             }
+    //         } else {
 
-            }
+    //         }
+    //     }
+    // }
+    // if AI makes it here, each ship has been either untouched or fully sunk
+    randRow = Math.floor(Math.random()*aIShotsRemaining.length);
+    randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
+    return aIShotsRemaining[randRow][randCol];
+}
+
+// remove shot from selection array for future random selection
+function removeFromSelectionArray(square) {
+    for (let i = 0; i < aIShotsRemaining.length; i++) {
+        let index = aIShotsRemaining[i].findIndex(e => e === square);
+        if (index > -1) {
+            return aIShotsRemaining[i].splice(index, 1)
         }
     }
 }
@@ -385,6 +407,7 @@ function aISelectShot() {
 
 init();
 
+// init function - initializes starting game state
 function init(){
     
     setup = true;
@@ -422,6 +445,16 @@ function init(){
     for (let key in playerHitCounter) {
         playerHitCounter[key] = [];
         computerHitCounter[key] = 0;
+    }
+
+    // build shot array for AI random selection - references board squares
+    aIShotsRemaining = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
+        return null;
+    })));
+    for (let i = 0; i<playerBoard.length; i++) {
+        for (let j = 0; j<playerBoard[i].length; j++) {
+            aIShotsRemaining[i][j] = playerBoard[i][j];
+        }
     }
 
 
