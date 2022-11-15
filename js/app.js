@@ -185,7 +185,7 @@ orientationIconEl.addEventListener('click', (event) => {
 computerBoardEl.forEach(e => e.addEventListener('click', event => {
     // set firing square to the id of target div
     firingSquare = event.target.id;
-    
+    console.dir(firingSquare)
     render();
 }))
 
@@ -773,40 +773,66 @@ function render(){
 function renderBoardEls(array, boardEl) {
     let node = 0;
     let shipIterator = {
-        destroyer: 1,
-        cruiser: 1,
-        submarine: 1,
-        battleship: 1,
-        carrier: 1,
+        destroyer: [1, true],
+        cruiser: [1, true],
+        submarine: [1, true],
+        battleship: [1, true],
+        carrier: [1, true],
     }
+    let namingArray = {'half': 2, 'third': 3, 'fourth': 4, 'fifth': 5};
+
+    array.forEach(row => {
+        let previousElement;
+        row.forEach(element => {
+      
+            if (previousElement && previousElement === element.ship) {
+     
+                shipIterator[element.ship][1] = false;
+            } 
+            previousElement = element.ship;
+        })
+    })
 
     array.forEach(row => {
         row.forEach(element => {
             if (element.ship === null) {
                 boardEl[node].classList.remove('hittable');
+                boardEl[node].classList.remove('rotated');
+                boardEl[node].classList.remove('sub');
+                boardEl[node].classList.remove('cruise');
+                for (let partOne in namingArray) {
+                    for (i=1; i<=namingArray[partOne]; i++) {
+                        boardEl[node].classList.remove(`${partOne}${i}`);
+                    }
+                }
             } else {
                 boardEl[node].classList.add('hittable');
                 switch (element.ship) {
                     case 'destroyer':
-                        boardEl[node].classList.add('half'+shipIterator[element.ship]);
-                        shipIterator[element.ship]++
+                        boardEl[node].classList.add('half'+shipIterator[element.ship][0]);
+                        shipIterator[element.ship][0]++
                         break;
                     case 'cruiser':
-                        boardEl[node].classList.add('third'+shipIterator[element.ship]);
-                        shipIterator[element.ship]++
+                        boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
+                        boardEl[node].classList.add('cruise');
+                        shipIterator[element.ship][0]++
                         break;
                     case 'submarine':
-                        boardEl[node].classList.add('third'+shipIterator[element.ship]);
-                        shipIterator[element.ship]++
+                        boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
+                        boardEl[node].classList.add('sub');
+                        shipIterator[element.ship][0]++
                         break;
                     case 'battleship':
-                        boardEl[node].classList.add('fourth'+shipIterator[element.ship]);
-                        shipIterator[element.ship]++
+                        boardEl[node].classList.add('fourth'+shipIterator[element.ship][0]);
+                        shipIterator[element.ship][0]++
                         break;
                     case 'carrier':
-                        boardEl[node].classList.add('fifth'+shipIterator[element.ship]);
-                        shipIterator[element.ship]++
+                        boardEl[node].classList.add('fifth'+shipIterator[element.ship][0]);
+                        shipIterator[element.ship][0]++
                         break;
+                }
+                if (shipIterator[element.ship][1]) {
+                    boardEl[node].classList.add('rotated');     
                 }
             }
             if (element.hit === false) {

@@ -274,18 +274,15 @@ button {
 
 .third1 {
     background-size: 300% 100%;
-    background-image: url('./imgs/submarinecropped.png');
 }
 
-.third1 {
+.third2 {
     background-size: 300% 100%;
-    background-image: url('./imgs/submarinecropped.png');
     background-position-x: 200%;
 }
 
-.third1 {
+.third3 {
     background-size: 300% 100%;
-    background-image: url('./imgs/submarinecropped.png');
     background-position-x: 100%;
 }
 
@@ -350,4 +347,16 @@ button {
     background-size: 500% 100%;
     background-image: url('./imgs/carriercropped.png');
     background-position-x: 100%;
+}
+
+.sub {
+    background-image: url('./imgs/submarinecropped.png');
+}
+
+.cruise {
+    background-image: url('./imgs/cruisercropped.png');
+}
+
+.rotated {
+    transform: rotate(90deg);
 }
