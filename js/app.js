@@ -772,6 +772,13 @@ function render(){
 // function for rendering a board given an array
 function renderBoardEls(array, boardEl) {
     let node = 0;
+    let shipIterator = {
+        destroyer: 1,
+        cruiser: 1,
+        submarine: 1,
+        battleship: 1,
+        carrier: 1,
+    }
 
     array.forEach(row => {
         row.forEach(element => {
@@ -779,6 +786,28 @@ function renderBoardEls(array, boardEl) {
                 boardEl[node].classList.remove('hittable');
             } else {
                 boardEl[node].classList.add('hittable');
+                switch (element.ship) {
+                    case 'destroyer':
+                        boardEl[node].classList.add('half'+shipIterator[element.ship]);
+                        shipIterator[element.ship]++
+                        break;
+                    case 'cruiser':
+                        boardEl[node].classList.add('third'+shipIterator[element.ship]);
+                        shipIterator[element.ship]++
+                        break;
+                    case 'submarine':
+                        boardEl[node].classList.add('third'+shipIterator[element.ship]);
+                        shipIterator[element.ship]++
+                        break;
+                    case 'battleship':
+                        boardEl[node].classList.add('fourth'+shipIterator[element.ship]);
+                        shipIterator[element.ship]++
+                        break;
+                    case 'carrier':
+                        boardEl[node].classList.add('fifth'+shipIterator[element.ship]);
+                        shipIterator[element.ship]++
+                        break;
+                }
             }
             if (element.hit === false) {
                 boardEl[node].classList.remove('hit');
