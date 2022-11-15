@@ -24,6 +24,10 @@ for (let i = 0; i<computerBoard.length; i++) {
     }
 }
 
+// random shot array indices
+
+const randomShots = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+
 // placement object
 
 const placements = {
@@ -37,11 +41,11 @@ const placements = {
 // player and computer ship hit counter
 
 const playerHitCounter = {
-    carrier: 0,
-    battleship: 0,
-    destroyer: 0,
-    submarine: 0,
-    cruiser: 0,
+    carrier: [],
+    battleship: [],
+    destroyer: [],
+    submarine: [],
+    cruiser: [],
 }
 
 const computerHitCounter = {
@@ -276,15 +280,15 @@ function canAIPlace(row, column, board, orientation, ship) {
 }
 
 
-// potential for future use
-// function getIndexOfNested(arr, row, col) {
-//     for (let i = 0; i < arr.length; i++) {
-//         let index = arr[i].findIndex(e => e[0] === row && e[1] === col);
-//         if (index > -1) {
-//             return [i, index];
-//         }
-//     }
-// }
+
+function getIndexOfHit(arr, name) {
+    for (let i = 0; i < arr.length; i++) {
+        let index = arr[i].findIndex(e => e.hit === true && e.ship === name);
+        if (index > -1) {
+            return [i, index];
+        }
+    }
+}
 
 function updatePlacement() {
     placements[draggedElement] = true;
@@ -343,6 +347,31 @@ function placeAIShips() {
     render()
 }
 
+// ai for making shots
+function aISelectShot() {
+    for (let key in playerHitCounter) {
+        if (playerHitCounter[key].length === 1) {
+            const anchor = getIndexOfHit(playerBoard, key);
+            while (true) {
+                let randomArray = Math.floor(Math.random()*randomShots.length);
+                let randomAdjacent = playerBoard[anchor[0]+randomArray[0]][anchor[1]+randomArray[1]];
+                if (randomAdjacent.hit) {
+                    return randomAdjacent;
+                } 
+            }
+        } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
+            const anchor = getIndexOfHit(playerBoard, key);
+            if ((playerBoard[anchor[0]+1].name === key && playerBoard[anchor[0]+1].hit === true) || (playerBoard[anchor[0]-1].name === key && playerBoard[anchor[0]-1].hit === true)) {
+                while (true) {
+                    i
+                }
+            } else {
+
+            }
+        }
+    }
+}
+
 /* ----- Main Functions ----- */
 
 // Inititalizes and resets game state
@@ -383,12 +412,15 @@ function init(){
         })
     })
 
+    playerBoard[5][5].ship = 'cruiser';
+    playerBoard[5][5].hit = true;
+
     // place ships for computer
     placeAIShips()
 
     // reset hitCounters
     for (let key in playerHitCounter) {
-        playerHitCounter[key] = 0;
+        playerHitCounter[key] = [];
         computerHitCounter[key] = 0;
     }
 
@@ -468,10 +500,10 @@ function renderHitTrack() {
         for (descendent of indicator.children) {
             descendent.classList.remove('damage')
         }
-        if (playerHitCounter[indicator.classList[1]] >= shipLengths.get(indicator.classList[1])) {
+        if (playerHitCounter[indicator.classList[1]].length >= shipLengths.get(indicator.classList[1])) {
             indicator.classList.add('sunk');
         } else {
-            for (i = 0; i<playerHitCounter[indicator.classList[1]]; i++) {
+            for (i = 0; i<playerHitCounter[indicator.classList[1]].length; i++) {
                 indicator.children[i].classList.add('damage');    
             }
         }
