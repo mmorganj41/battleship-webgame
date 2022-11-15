@@ -176,6 +176,10 @@ span {
     background-color: grey;
 }
 
+#playerboard > .hit {
+    background-color: red;
+}
+
 .hit {
     background-color: red;
 }
