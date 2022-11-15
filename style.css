@@ -189,6 +189,10 @@ button {
     border: solid yellow 2px;
 }
 
+#playerboard > .firingsquare {
+    border: solid orange 2px;
+}
+
 .visible {
     display: block;
 }

@@ -77,7 +77,7 @@ let orient = false;
 let draggedElement;
 let firingSquare;
 let aIShotsRemaining;
-
+let lastAIAction;
 
 
 /* ----- Cached elements ----- */
@@ -351,7 +351,25 @@ function placeAIShips() {
     render()
 }
 
-// ai for making shots
+// function for aI firing and updating relevant arrays
+function aIFireShot() {
+    let chosenShot = aISelectShot()
+    
+    lastAIAction = chosenShot.name;
+    chosenShot.hit = true;
+    removeFromSelectionArray(chosenShot);
+
+    if (chosenShot.ship !== null) {
+        message = `The computer hit your ${chosenShot.ship} at ${chosenShot.name}.`
+        playerHitCounter[chosenShot.ship].push(chosenShot);
+    } else {
+        message = `The computer chose ${chosenShot.name} and missed.`
+    }
+
+    render();
+}
+
+// ai helper function for choosing shots
 function aISelectShot() {
     let randRow, randCol;
 
@@ -396,7 +414,7 @@ function aISelectShot() {
             while (adjacentSet.size > 0) {
                 let randomKey = getRandomKey(adjacentSet)
                 let currentSquare = findfromName(aIShotsRemaining, randomKey);
-                
+
                 if (currentSquare !== undefined) {
                     return currentSquare;
                 }
@@ -449,7 +467,11 @@ function removeFromSelectionArray(square) {
     for (let i = 0; i < aIShotsRemaining.length; i++) {
         let index = aIShotsRemaining[i].findIndex(e => e === square);
         if (index > -1) {
-            return aIShotsRemaining[i].splice(index, 1)
+            if (aIShotsRemaining[i].length === 1) {
+                return aIShotsRemaining.splice(i, 1)[index];
+            } else {
+                return aIShotsRemaining[i].splice(index, 1);
+            }
         }
     }
 }
@@ -471,6 +493,8 @@ init();
 function init(){
     
     setup = true;
+
+    lastAIAction = null;
 
     // clear placement object
     for (placed in placements) {
@@ -495,12 +519,6 @@ function init(){
         })
     })
 
-    // debug
-    playerBoard[5][5].ship = 'cruiser';
-    playerBoard[5][5].hit = true;
-    playerBoard[5][6].ship = 'cruiser';
-    playerBoard[5][6].hit = true;
-
     // place ships for computer
     placeAIShips()
 
@@ -509,10 +527,6 @@ function init(){
         playerHitCounter[key] = [];
         computerHitCounter[key] = 0;
     }
-
-    // debug
-    playerHitCounter['cruiser'].push(playerBoard[5][5]);
-    playerHitCounter['cruiser'].push(playerBoard[5][6]);
 
     // build shot array for AI random selection - references board squares
     aIShotsRemaining = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
@@ -574,9 +588,12 @@ function renderBoardEls(array, boardEl) {
             // render firing square
             if (boardEl[node].id === firingSquare) {
                 boardEl[node].classList.add('firingsquare');
+            } else if (boardEl[node].id === lastAIAction) {
+                boardEl[node].classList.add('firingsquare');
             } else {
                 boardEl[node].classList.remove('firingsquare');
             }
+
             node++;
         })
     })
