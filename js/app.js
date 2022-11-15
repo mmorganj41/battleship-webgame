@@ -24,9 +24,6 @@ for (let i = 0; i<computerBoard.length; i++) {
     }
 }
 
-// random shot array indices
-
-const randomShots = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 // placement object
 
@@ -357,31 +354,59 @@ function placeAIShips() {
 // ai for making shots
 function aISelectShot() {
     let randRow, randCol;
-    // for (let key in playerHitCounter) {
-    //     if (playerHitCounter[key].length === 1) {
-    //         const anchor = getIndexOfHit(playerBoard, key);
-    //         while (true) {
-    //             let randomArray = Math.floor(Math.random()*randomShots.length);
-    //             let randomAdjacent = playerBoard[anchor[0]+randomArray[0]][anchor[1]+randomArray[1]];
-    //             if (randomAdjacent.hit) {
-    //                 return randomAdjacent;
-    //             } 
-    //         }
-    //     } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
-    //         const anchor = getIndexOfHit(playerBoard, key);
-    //         if ((playerBoard[anchor[0]+1].name === key && playerBoard[anchor[0]+1].hit === true) || (playerBoard[anchor[0]-1].name === key && playerBoard[anchor[0]-1].hit === true)) {
-    //             while (true) {
-    //                 i
-    //             }
-    //         } else {
 
-    //         }
-    //     }
-    // }
-    // if AI makes it here, each ship has been either untouched or fully sunk
+    // check if the computer has hit each ship but not fully sunk
+    for (let key in playerHitCounter) {
+
+        // randomly determine a square around a hit if a ship has been hit once
+        if (playerHitCounter[key].length === 1) {
+            let adjacentArray = randomSelectionArrayCreator(playerHitCounter[key][0].name, true, true);
+
+            // randomly select from array and slowly decrease size of array if unselectable 
+            while (adjacentArray.length > 0) {
+                let currentSquare = findfromName(aIShotsRemaining, adjacentArray.splice(Math.floor(Math.random()*adjacentArray.length), 1));
+                if (currentSquare !== undefined) {
+                    return currentSquare;
+                }
+            }
+        
+        // if a ship has been hit at least once, direction has been determined, randomly select from adjacent squares in that direction
+        } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
+
+
+        }
+    }
+
+    // if AI makes it here, each ship has been either untouched or fully sunk, randomly select any square available, hoping for a hit
     randRow = Math.floor(Math.random()*aIShotsRemaining.length);
     randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
     return aIShotsRemaining[randRow][randCol];
+}
+
+// generates a set around the square input (matches element.name of the board arrays)
+function randomSelectionArrayCreator(squareStr, rowBool, columnBool, randomSelection = new Set()) {
+    const directionArr = [1, -1];
+
+    let colCharCode = squareStr.charCodeAt(0);
+    let rowValue = Number(squareStr.match(/\d+/));
+
+    if (rowBool) {
+        for (let num of directionArr) {
+            let newRow = rowValue+num;
+            if (newRow > 0 && newRow < 11) {
+                randomSelection.add(`${String.fromCharCode(colCharCode)}${String(newRow)}`);
+            }
+        }
+    }
+    if (columnBool) {
+        for (let num of directionArr) {
+            let newCol = String.fromCharCode(colCharCode+num);
+            if (newCol >= 'a' && newCol <= 'j') {
+                randomSelection.add(`${newCol}${String(rowValue)}`);
+            }
+        }
+    }
+    return randomSelection;
 }
 
 // remove shot from selection array for future random selection
