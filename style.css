@@ -110,8 +110,7 @@ span {
     margin: 2vmin;
     font-weight: 700;
     opacity: 0;
-    text-align: center;
-    width: 60px;
+    text-align:center;
 }
 
 #playerinfo {
@@ -120,7 +119,6 @@ span {
 
 #computerinfo {
     grid-column-start: 4;
-    align-self: center;
 }
 
 #orientation {
@@ -146,7 +144,8 @@ span {
 }
 
 #playerships > .ship {
-    background-color: grey;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 #playerships > .ship:hover {
@@ -155,26 +154,48 @@ span {
 
 .ship > div {
     border: black solid 1px;
+    opacity: .5;
 }
 
 .carrier {
     grid-template-columns: repeat(5, 40px);
+    
+}
+
+#playerships > .carrier {
+    background-image: url('./imgs/carriercropped.png');
 }
 
 .battleship {
     grid-template-columns: repeat(4,  40px);
 }
 
+#playerships > .battleship {
+    background-image: url('./imgs/battleshipcropped.png');
+}
+
 .destroyer {
     grid-template-columns: repeat(2,  40px);
+}
+
+#playerships > .destroyer {
+    background-image: url('./imgs/destroyercropped.png');
 }
 
 .cruiser {
     grid-template-columns: repeat(3,  40px);
 }
 
+#playerships > .cruiser {
+    background-image: url('./imgs/cruisercropped.png');
+}
+
 .submarine {
     grid-template-columns: repeat(3,  40px);
+}
+
+#playerships > .submarine {
+    background-image: url('./imgs/submarinecropped.png');
 }
 
 .countingdown {
@@ -218,7 +239,7 @@ button {
 }
 
 #playerships > .placed {
-    background-color: green;
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.5);
 }
 
 #computerboard > .firingsquare {
