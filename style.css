@@ -221,16 +221,20 @@ span {
     background-color: grey;
 }
 
+
+
 #playerboard > .hit {
-    background-color: red;
+    box-shadow: inset 0 0 0 1000px rgba(255, 0, 0, 0.5);
 }
 
-.hit {
+#computerboard > .hit {
     background-color: red;
+    opacity: .5;
 }
 
 .miss {
     background-color: white;
+    opacity: .5;
 }
 
 button {
@@ -255,11 +259,11 @@ button {
 }
 
 #playerships .damage {
-    background-color: red;
+    box-shadow: inset 0 0 0 1000px rgba(255, 0, 0, 0.5);
 }
 
 #playerships > .sunk {
-    background-color: maroon;
+    box-shadow: inset 0 0 0 1000px rgba(255, 0, 64, 0.65);
 }
 
 #computerships .damage {
