@@ -441,9 +441,6 @@ function aISelectShot() {
         }
     }
 
-    console.log(tempTransposed);
-    console.log(aIShotsRemaining);
-
 
     function concatenateStretches(arr, stretch = 0) {
         const concatenatedArray = new Array(10).fill().map(() => (new Array()));
@@ -454,16 +451,14 @@ function aISelectShot() {
 
                 // push stretches to new array - duplicates intended to maximize chance - works on both transposed and regular array
                 if (arr[i][j].name[0] === arr[i][j+1].name[0]) {
-                    //console.log(Number(arr[i][j].name.match(/\d+/)+stretch-1), Number(arr[i][j+stretch-1].name))
-                    if (Number(arr[i][j].name.match(/\d+/)+stretch-1) === Number(arr[i][j+stretch-1].name)) {
+
+                    if (Number(arr[i][j].name.match(/\d+/))+stretch-1 === Number(arr[i][j+stretch-1].name.match(/\d+/))) {
                         concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
                     }
 
                 } else {
 
-                    //console.log(String.fromCharCode(arr[i][j].name.charCodeAt(0)+stretch-1),arr[i][j+stretch-1].name[0])
                     if (String.fromCharCode(arr[i][j].name.charCodeAt(0)+stretch-1) === arr[i][j+stretch-1].name[0]) {
-
                         concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
                     }
 
@@ -488,9 +483,7 @@ function aISelectShot() {
 
 
     let stretchedTransposed = concatenateStretches(tempTransposed, shortestStretch).reduce(filterSaveLongest, [[]]);
-    console.log(stretchedTransposed);
     let stretched = concatenateStretches(aIShotsRemaining, shortestStretch).reduce(filterSaveLongest, [[]]);;
-    console.log(stretched);
 
 
     if (stretchedTransposed[0].length > stretched[0].length) {
@@ -501,47 +494,48 @@ function aISelectShot() {
         randomArraySwitch = !!Math.floor(Math.random()*2);
     }
 
+
     if (randomArraySwitch) {
-        let firstIndex = Math.floor(Math.random()*stretched.length);
-        let secondIndex = Math.floor(Math.random()*stretched[firstIndex].length);
-        return stretched[firstIndex][secondIndex];
+        let firstIndex = Math.floor(Math.random()*stretchedTransposed.length);
+        let secondIndex = Math.floor(Math.random()*stretchedTransposed[firstIndex].length);
+        let shot = stretchedTransposed[firstIndex][secondIndex]
+        if (shot) return shot
     } else {
         let firstIndex = Math.floor(Math.random()*stretched.length);
         let secondIndex = Math.floor(Math.random()*stretched[firstIndex].length);
-        return stretched[firstIndex][secondIndex];
+        let shot = stretched[firstIndex][secondIndex];
+        if (shot) return shot
     }
 
     // // just in case somehow the ai can't still hit ships even when focusing on stretches only
 
 
 
-    // let reducedTransposed = tempTransposed.filter(e => (e.length > 0)).reduce(filterSaveLongest, [[]]);
-    // let reduced = aIShotsRemaining.reduce(filterSaveLongest, [[]]);
+    let reducedTransposed = tempTransposed.filter(e => (e.length > 0)).reduce(filterSaveLongest, [[]]);
+    let reduced = aIShotsRemaining.reduce(filterSaveLongest, [[]]);
 
     // in case of equality randomly choose whether to focus on column or row
 
 
-    // if (reducedTransposed[0].length > reduced[0].length) {
-    //     randomArraySwitch = true;
-    // } else if (reducedTransposed[0].length < reduced[0].length) {
-    //     randomArraySwitch = false;
-    // } else {
-    //     randomArraySwitch = !!Math.floor(Math.random()*2);
-    // }
+    if (reducedTransposed[0].length > reduced[0].length) {
+        randomArraySwitch = true;
+    } else if (reducedTransposed[0].length < reduced[0].length) {
+        randomArraySwitch = false;
+    } else {
+        randomArraySwitch = !!Math.floor(Math.random()*2);
+    }
 
     
-    // if (randomArraySwitch) {
-    //     let firstIndex = Math.floor(Math.random()*reducedTransposed.length);
-    //     let secondIndex = Math.floor(Math.random()*reducedTransposed[firstIndex].length);
-    //     return reducedTransposed[firstIndex][secondIndex];
-    // } else {
-    //     let firstIndex = Math.floor(Math.random()*reduced.length);
-    //     let secondIndex = Math.floor(Math.random()*reduced[firstIndex].length);
-    //     return reduced[firstIndex][secondIndex];
-    // }
-    // randRow = Math.floor(Math.random()*aIShotsRemaining.length);
-    // randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
-    // return aIShotsRemaining[randRow][randCol];
+    if (randomArraySwitch) {
+        let firstIndex = Math.floor(Math.random()*reducedTransposed.length);
+        let secondIndex = Math.floor(Math.random()*reducedTransposed[firstIndex].length);
+        return reducedTransposed[firstIndex][secondIndex];
+    } else {
+        let firstIndex = Math.floor(Math.random()*reduced.length);
+        let secondIndex = Math.floor(Math.random()*reduced[firstIndex].length);
+        return reduced[firstIndex][secondIndex];
+    }
+
 }
 
 // generates a set around the square input (matches element.name of the board arrays)
