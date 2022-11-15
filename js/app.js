@@ -106,6 +106,7 @@ const resetButtonEl = document.getElementById('reset');
 const playerTurnEl = document.getElementById('playerturn');
 const computerTurnEl = document.getElementById('computerturn');
 const countdownEl = document.getElementById('countdown');
+const turnCountEl = document.querySelector('#turn span');
 
 // Adding drag events
 
@@ -204,6 +205,7 @@ fireButtonEl.addEventListener('click', event => {
         } else {
             value.hit = true;
             playerTurn = false;
+            turnCount++;
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
                 computerHitCounter[value.ship]++
@@ -220,9 +222,12 @@ fireButtonEl.addEventListener('click', event => {
         let delay = 3;
         const countdown = setInterval(function() {
             if (delay <= 0) {
+                
                 aIFireShot();
                 playerTurn = true;
+                turnCount++;
                 render();
+                
                 clearInterval(countdown)    
             }
             countdownEl.innerText = delay;
@@ -695,6 +700,8 @@ function render(){
     fireButtonEl.innerText = (setup) ? "Start" : "FIRE!";
 
     messageEl.innerText = message;
+
+    turnCountEl.innerText = turnCount;
 
     
 }
