@@ -62,10 +62,24 @@ span {
     display: grid;
     grid-template-rows: repeat(10,  40px);
     grid-template-columns: repeat(10,  40px);
+    background-image: url('./imgs/sea.jpg');
+    background-size: contain;
 }
 
 .board > div {
     border: black solid 1px;
+    font-weight: 700;
+    font-size: 20px;
+    text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+     1px  0   0 #000,
+     1px  1px 0 #000,
+     0    1px 0 #000,
+    -1px  1px 0 #000,
+    -1px  0   0 #000;
+    opacity: .75;
 }
 
 #computerboard > div:hover {
