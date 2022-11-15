@@ -269,3 +269,85 @@ button {
 #computerships > .sunk {
     background-color: green;
 }
+
+/* Sizes for partial images */
+
+.third1 {
+    background-size: 300% 100%;
+    background-image: url('./imgs/submarinecropped.png');
+}
+
+.third1 {
+    background-size: 300% 100%;
+    background-image: url('./imgs/submarinecropped.png');
+    background-position-x: 200%;
+}
+
+.third1 {
+    background-size: 300% 100%;
+    background-image: url('./imgs/submarinecropped.png');
+    background-position-x: 100%;
+}
+
+.half1 {
+    background-size: 200% 100%;
+    background-image: url('./imgs/destroyercropped.png');
+}
+
+.half2 {
+    background-size: 200% 100%;
+    background-image: url('./imgs/destroyercropped.png');
+    background-position-x: 100%;
+}
+
+.fourth1 {
+    background-size: 400% 100%;
+    background-image: url('./imgs/battleshipcropped.png');
+}
+
+.fourth2 {
+    background-size: 400% 100%;
+    background-image: url('./imgs/battleshipcropped.png');
+    background-position-x: 300%;
+}
+
+.fourth3 {
+    background-size: 400% 100%;
+    background-image: url('./imgs/battleshipcropped.png');
+    background-position-x: 200%;
+}
+
+.fourth4 {
+    background-size: 400% 100%;
+    background-image: url('./imgs/battleshipcropped.png');
+    background-position-x: 100%;
+}
+
+.fifth1 {
+    background-size: 500% 100%;
+    background-image: url('./imgs/carriercropped.png');
+}
+
+.fifth2 {
+    background-size: 500% 100%;
+    background-image: url('./imgs/carriercropped.png');
+    background-position-x: 400%;
+}
+
+.fifth3 {
+    background-size: 500% 100%;
+    background-image: url('./imgs/carriercropped.png');
+    background-position-x: 300%;
+}
+
+.fifth4 {
+    background-size: 500% 100%;
+    background-image: url('./imgs/carriercropped.png');
+    background-position-x: 200%;
+}
+
+.fifth5 {
+    background-size: 500% 100%;
+    background-image: url('./imgs/carriercropped.png');
+    background-position-x: 100%;
+}
