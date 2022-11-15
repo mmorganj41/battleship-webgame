@@ -82,6 +82,7 @@ let gameOver;
 let turnCount;
 let playerWins = 0;
 let computerWins = 0;
+let haltMoves = false;
 
 
 /* ----- Cached elements ----- */
@@ -107,6 +108,8 @@ const playerTurnEl = document.getElementById('playerturn');
 const computerTurnEl = document.getElementById('computerturn');
 const countdownEl = document.getElementById('countdown');
 const turnCountEl = document.querySelector('#turn span');
+const playerWinsEl = document.querySelector('#playerwin span');
+const computerWinsEl = document.querySelector('#computerwin span');
 
 // Adding drag events
 
@@ -183,6 +186,8 @@ computerBoardEl.forEach(e => e.addEventListener('click', event => {
 
 fireButtonEl.addEventListener('click', event => {
     // if game is still in setup and all ships are on the board start the game
+    if (haltMoves) return;
+    
     if (gameOver) {
         message = 'Game is over, press reset to play again!'
         return;
@@ -209,6 +214,12 @@ fireButtonEl.addEventListener('click', event => {
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
                 computerHitCounter[value.ship]++
+                console.log(Object.values(computerHitCounter).reduce((sum, element) => sum + element))
+                if (Object.values(computerHitCounter).reduce((sum, element) => sum + element) >= 17) {
+                    gameOver = true;
+                    message = "You win. You sunk all of the enemy's ships.";
+                    playerWins++;
+                }
             } else {
                 message = `Miss.`
             }
@@ -218,19 +229,31 @@ fireButtonEl.addEventListener('click', event => {
 
     render();
 
-    if (!playerTurn && !setup) {
+    if (!playerTurn && !setup && !gameOver) {
         let delay = 3;
+        haltMoves = true;
         const countdown = setInterval(function() {
+            countdownEl.innerText = delay;
+
             if (delay <= 0) {
                 
                 aIFireShot();
                 playerTurn = true;
                 turnCount++;
+                
+                if (Object.values(playerHitCounter).reduce((sum, element) => sum + element.length, 0) >= 17) {
+                    gameOver = true;
+                    message = 'You lose. The computer sunk all of your ships.';
+                    computerWins++;
+                } 
+
+                haltMoves = false;
+                countdownEl.innerText = '';
                 render();
                 
                 clearInterval(countdown)    
             }
-            countdownEl.innerText = delay;
+            
             delay--;
         }, 1000);
         if (delay < 1) {}
@@ -637,6 +660,7 @@ function init(){
     setup = true;
     gameOver = false;
     turnCount = 0;
+    haltMoves = false;
 
     // clear placement object
     for (placed in placements) {
@@ -703,7 +727,8 @@ function render(){
 
     turnCountEl.innerText = turnCount;
 
-    
+    playerWinsEl.innerText = playerWins;
+    computerWinsEl.innerText = computerWins;
 }
 
 // function for rendering a board given an array
