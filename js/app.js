@@ -372,7 +372,8 @@ function aIFireShot() {
 // ai helper function for choosing shots
 function aISelectShot() {
     // let randRow, randCol;
-
+    let shortestStretch;
+    
     // check if the computer has hit each ship but not fully sunk
     for (let key in playerHitCounter) {
 
@@ -421,19 +422,58 @@ function aISelectShot() {
                 adjacentSet.delete(randomKey);
             }
 
+            // track shortest available ship to sink
+        } else if (playerHitCounter[key].length === 0) {
+            if (shortestStretch === undefined || shipLengths.get(key) < shortestStretch) {
+                shortestStretch = shipLengths.get(key);
+            }
         }
     }
 
-    // if AI makes it here, each ship has been either untouched or fully sunk, randomly select any square available, hoping for a hit
+    // if AI makes it here, each ship has been either untouched or fully sunk, focus on stretches that are at least as long as the shortest ship that can be sunk
+
+    let randomArraySwitch;
 
     let tempTransposed = new Array(10).fill().map(() => (new Array()));
     for (let row of aIShotsRemaining) {
         for (let element of row) {
-            tempTransposed[Number(element.name.match(/\d+/))-1].push(element);
+            tempTransposed[Number(element.name.charCodeAt(0)-'a'.charCodeAt(0))].push(element);
         }
     }
 
     console.log(tempTransposed);
+    console.log(aIShotsRemaining);
+
+
+    function concatenateStretches(arr, stretch = 0) {
+        const concatenatedArray = new Array(10).fill().map(() => (new Array()));
+
+        for (i=0; i<arr.length; i++) {
+
+            for (j=0; j<arr[i].length-stretch+1;j++) {
+
+                // push stretches to new array - duplicates intended to maximize chance - works on both transposed and regular array
+                if (arr[i][j].name[0] === arr[i][j+1].name[0]) {
+                    //console.log(Number(arr[i][j].name.match(/\d+/)+stretch-1), Number(arr[i][j+stretch-1].name))
+                    if (Number(arr[i][j].name.match(/\d+/)+stretch-1) === Number(arr[i][j+stretch-1].name)) {
+                        concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
+                    }
+
+                } else {
+
+                    //console.log(String.fromCharCode(arr[i][j].name.charCodeAt(0)+stretch-1),arr[i][j+stretch-1].name[0])
+                    if (String.fromCharCode(arr[i][j].name.charCodeAt(0)+stretch-1) === arr[i][j+stretch-1].name[0]) {
+
+                        concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
+                    }
+
+              }
+
+            }
+        }
+        // remove empty arrays or empty spaces
+        return concatenatedArray.filter(e => (e) && e.length > 0);
+    }
 
     function filterSaveLongest(longest, current){
         if (longest[0].length < current.length) {
@@ -446,30 +486,59 @@ function aISelectShot() {
         }
     }
 
-    let reducedTransposed = tempTransposed.filter(e => (e.length > 0)).reduce(filterSaveLongest, [[]]);
-    let reduced = aIShotsRemaining.reduce(filterSaveLongest, [[]]);
 
-    // in case of equality randomly choose whether to focus on column or row
-    let randomArraySwitch;
+    let stretchedTransposed = concatenateStretches(tempTransposed, shortestStretch).reduce(filterSaveLongest, [[]]);
+    console.log(stretchedTransposed);
+    let stretched = concatenateStretches(aIShotsRemaining, shortestStretch).reduce(filterSaveLongest, [[]]);;
+    console.log(stretched);
 
-    if (reducedTransposed[0].length > reduced[0].length) {
+
+    if (stretchedTransposed[0].length > stretched[0].length) {
         randomArraySwitch = true;
-    } else if (reducedTransposed.length < reduced.length) {
+    } else if (stretchedTransposed[0].length < stretched[0].length) {
         randomArraySwitch = false;
     } else {
         randomArraySwitch = !!Math.floor(Math.random()*2);
     }
 
-    
     if (randomArraySwitch) {
-        let firstIndex = Math.floor(Math.random()*reducedTransposed.length);
-        let secondIndex = Math.floor(Math.random()*reducedTransposed[firstIndex].length);
-        return reducedTransposed[firstIndex][secondIndex];
+        let firstIndex = Math.floor(Math.random()*stretched.length);
+        let secondIndex = Math.floor(Math.random()*stretched[firstIndex].length);
+        return stretched[firstIndex][secondIndex];
     } else {
-        let firstIndex = Math.floor(Math.random()*reduced.length);
-        let secondIndex = Math.floor(Math.random()*reduced[firstIndex].length);
-        return reduced[firstIndex][secondIndex];
+        let firstIndex = Math.floor(Math.random()*stretched.length);
+        let secondIndex = Math.floor(Math.random()*stretched[firstIndex].length);
+        return stretched[firstIndex][secondIndex];
     }
+
+    // // just in case somehow the ai can't still hit ships even when focusing on stretches only
+
+
+
+    // let reducedTransposed = tempTransposed.filter(e => (e.length > 0)).reduce(filterSaveLongest, [[]]);
+    // let reduced = aIShotsRemaining.reduce(filterSaveLongest, [[]]);
+
+    // in case of equality randomly choose whether to focus on column or row
+
+
+    // if (reducedTransposed[0].length > reduced[0].length) {
+    //     randomArraySwitch = true;
+    // } else if (reducedTransposed[0].length < reduced[0].length) {
+    //     randomArraySwitch = false;
+    // } else {
+    //     randomArraySwitch = !!Math.floor(Math.random()*2);
+    // }
+
+    
+    // if (randomArraySwitch) {
+    //     let firstIndex = Math.floor(Math.random()*reducedTransposed.length);
+    //     let secondIndex = Math.floor(Math.random()*reducedTransposed[firstIndex].length);
+    //     return reducedTransposed[firstIndex][secondIndex];
+    // } else {
+    //     let firstIndex = Math.floor(Math.random()*reduced.length);
+    //     let secondIndex = Math.floor(Math.random()*reduced[firstIndex].length);
+    //     return reduced[firstIndex][secondIndex];
+    // }
     // randRow = Math.floor(Math.random()*aIShotsRemaining.length);
     // randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
     // return aIShotsRemaining[randRow][randCol];
