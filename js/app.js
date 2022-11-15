@@ -96,6 +96,7 @@ let haltMoves = false;
 // Reset Button
 // Turn indicator
 
+const bodyEl = document.querySelector('body');
 const playerBoardEl = document.querySelectorAll('#playerboard > div');
 const computerBoardEl = document.querySelectorAll('#computerboard > div');
 const playerShipEls = document.getElementById('playerships');
@@ -184,7 +185,24 @@ computerBoardEl.forEach(e => e.addEventListener('click', event => {
     render();
 }))
 
-fireButtonEl.addEventListener('click', event => {
+fireButtonEl.addEventListener('click', fire);
+
+bodyEl.addEventListener('keyup', (event) => {
+    if (event.code === "KeyF") {
+        fire();
+    } else if (event.code === "KeyR") {
+        init();
+    }
+})
+
+
+/* ----- Callback Functions ------ */
+// Placement of player ships
+// Ship orientation button changer
+// Selection of square to fire upon
+// Firer button function - checks if square has ship and if true updates the ships on bottom
+
+function fire(){
     // if game is still in setup and all ships are on the board start the game
     if (haltMoves) return;
     
@@ -214,7 +232,7 @@ fireButtonEl.addEventListener('click', event => {
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
                 computerHitCounter[value.ship]++
-                console.log(Object.values(computerHitCounter).reduce((sum, element) => sum + element))
+                
                 if (Object.values(computerHitCounter).reduce((sum, element) => sum + element) >= 17) {
                     gameOver = true;
                     message = "You win. You sunk all of the enemy's ships.";
@@ -259,15 +277,7 @@ fireButtonEl.addEventListener('click', event => {
         if (delay < 1) {}
         
     }    
-})
-
-
-/* ----- Callback Functions ------ */
-// Placement of player ships
-// Ship orientation button changer
-// Selection of square to fire upon
-// Firer button function - checks if square has ship and if true updates the ships on bottom
-
+};
 
 // Finds the array element from its name property
 function findfromName(arr, name) {
@@ -721,7 +731,7 @@ function render(){
 
     renderHitTrack();
     
-    fireButtonEl.innerText = (setup) ? "Start" : "FIRE!";
+    fireButtonEl.innerHTML = (setup) ? "Start" : "<u>F</u>IRE!";
 
     messageEl.innerText = message;
 
