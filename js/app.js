@@ -360,19 +360,48 @@ function aISelectShot() {
 
         // randomly determine a square around a hit if a ship has been hit once
         if (playerHitCounter[key].length === 1) {
-            let adjacentArray = randomSelectionArrayCreator(playerHitCounter[key][0].name, true, true);
+            
+            let adjacentSet = randomSelectionArrayCreator(playerHitCounter[key][0].name, true, true);
+             // randomly select from array and slowly decrease size of array if unselectable 
+            while (adjacentSet.size > 0) {
+                let randomKey = getRandomKey(adjacentSet)
+                let currentSquare = findfromName(aIShotsRemaining, randomKey);
 
-            // randomly select from array and slowly decrease size of array if unselectable 
-            while (adjacentArray.length > 0) {
-                let currentSquare = findfromName(aIShotsRemaining, adjacentArray.splice(Math.floor(Math.random()*adjacentArray.length), 1));
                 if (currentSquare !== undefined) {
                     return currentSquare;
                 }
+                adjacentSet.delete(randomKey);
             }
         
         // if a ship has been hit at least once, direction has been determined, randomly select from adjacent squares in that direction
         } else if (playerHitCounter[key].length > 1 && playerHitCounter[key].length < shipLengths.get(key)) {
 
+            // create new set to hold elements along direction
+            let adjacentSet = new Set();
+            let addRows = false;
+            let addCols = false;
+
+            // check to see if the first letter (aka the column) is the same, otherwise, the row must be the same
+            if (playerHitCounter[key][0].name[0] === playerHitCounter[key][1].name[0]) {
+                addRows = true;
+            } else {
+                addCols = true;
+            }
+
+            // iterate down the found squares adding all adjacents
+            for (let square of playerHitCounter[key]) {
+                randomSelectionArrayCreator(square.name, addRows, addCols, adjacentSet);
+            }
+
+            while (adjacentSet.size > 0) {
+                let randomKey = getRandomKey(adjacentSet)
+                let currentSquare = findfromName(aIShotsRemaining, randomKey);
+                
+                if (currentSquare !== undefined) {
+                    return currentSquare;
+                }
+                adjacentSet.delete(randomKey);
+            }
 
         }
     }
@@ -407,6 +436,12 @@ function randomSelectionArrayCreator(squareStr, rowBool, columnBool, randomSelec
         }
     }
     return randomSelection;
+}
+
+// returns random key from set
+function getRandomKey(set) {
+    let keys = Array.from(set.keys());
+    return keys[Math.floor(Math.random() * keys.length)];
 }
 
 // remove shot from selection array for future random selection
@@ -460,8 +495,11 @@ function init(){
         })
     })
 
+    // debug
     playerBoard[5][5].ship = 'cruiser';
     playerBoard[5][5].hit = true;
+    playerBoard[5][6].ship = 'cruiser';
+    playerBoard[5][6].hit = true;
 
     // place ships for computer
     placeAIShips()
@@ -471,6 +509,10 @@ function init(){
         playerHitCounter[key] = [];
         computerHitCounter[key] = 0;
     }
+
+    // debug
+    playerHitCounter['cruiser'].push(playerBoard[5][5]);
+    playerHitCounter['cruiser'].push(playerBoard[5][6]);
 
     // build shot array for AI random selection - references board squares
     aIShotsRemaining = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
@@ -482,6 +524,8 @@ function init(){
         }
     }
 
+    removeFromSelectionArray(playerHitCounter['cruiser'][0]);
+    removeFromSelectionArray(playerHitCounter['cruiser'][1]);
 
     // clear firing square
     firingSquare = null;
