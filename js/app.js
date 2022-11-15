@@ -755,7 +755,7 @@ function render(){
     renderTurn();
 
     renderBoardEls(playerBoard, playerBoardEl);
-    renderBoardEls(computerBoard, computerBoardEl);
+    renderBoardEls(computerBoard, computerBoardEl, false);
 
     renderHitTrack();
     
@@ -770,7 +770,7 @@ function render(){
 }
 
 // function for rendering a board given an array
-function renderBoardEls(array, boardEl) {
+function renderBoardEls(array, boardEl, renderShips=true) {
     let node = 0;
     let shipIterator = {
         destroyer: [1, true],
@@ -781,17 +781,19 @@ function renderBoardEls(array, boardEl) {
     }
     let namingArray = {'half': 2, 'third': 3, 'fourth': 4, 'fifth': 5};
 
-    array.forEach(row => {
-        let previousElement;
-        row.forEach(element => {
-      
-            if (previousElement && previousElement === element.ship) {
-     
-                shipIterator[element.ship][1] = false;
-            } 
-            previousElement = element.ship;
+    if (renderShips) {
+        array.forEach(row => {
+            let previousElement;
+            row.forEach(element => {
+        
+                if (previousElement && previousElement === element.ship) {
+        
+                    shipIterator[element.ship][1] = false;
+                } 
+                previousElement = element.ship;
+            })
         })
-    })
+    }
 
     array.forEach(row => {
         row.forEach(element => {
@@ -807,32 +809,34 @@ function renderBoardEls(array, boardEl) {
                 }
             } else {
                 boardEl[node].classList.add('hittable');
-                switch (element.ship) {
-                    case 'destroyer':
-                        boardEl[node].classList.add('half'+shipIterator[element.ship][0]);
-                        shipIterator[element.ship][0]++
-                        break;
-                    case 'cruiser':
-                        boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
-                        boardEl[node].classList.add('cruise');
-                        shipIterator[element.ship][0]++
-                        break;
-                    case 'submarine':
-                        boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
-                        boardEl[node].classList.add('sub');
-                        shipIterator[element.ship][0]++
-                        break;
-                    case 'battleship':
-                        boardEl[node].classList.add('fourth'+shipIterator[element.ship][0]);
-                        shipIterator[element.ship][0]++
-                        break;
-                    case 'carrier':
-                        boardEl[node].classList.add('fifth'+shipIterator[element.ship][0]);
-                        shipIterator[element.ship][0]++
-                        break;
-                }
-                if (shipIterator[element.ship][1]) {
-                    boardEl[node].classList.add('rotated');     
+                if (renderShips) {
+                    switch (element.ship) {
+                        case 'destroyer':
+                            boardEl[node].classList.add('half'+shipIterator[element.ship][0]);
+                            shipIterator[element.ship][0]++
+                            break;
+                        case 'cruiser':
+                            boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
+                            boardEl[node].classList.add('cruise');
+                            shipIterator[element.ship][0]++
+                            break;
+                        case 'submarine':
+                            boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
+                            boardEl[node].classList.add('sub');
+                            shipIterator[element.ship][0]++
+                            break;
+                        case 'battleship':
+                            boardEl[node].classList.add('fourth'+shipIterator[element.ship][0]);
+                            shipIterator[element.ship][0]++
+                            break;
+                        case 'carrier':
+                            boardEl[node].classList.add('fifth'+shipIterator[element.ship][0]);
+                            shipIterator[element.ship][0]++
+                            break;
+                    }
+                    if (shipIterator[element.ship][1]) {
+                        boardEl[node].classList.add('rotated');     
+                    }
                 }
             }
             if (element.hit === false) {
