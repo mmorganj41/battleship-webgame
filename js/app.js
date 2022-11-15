@@ -371,7 +371,7 @@ function aIFireShot() {
 
 // ai helper function for choosing shots
 function aISelectShot() {
-    let randRow, randCol;
+    // let randRow, randCol;
 
     // check if the computer has hit each ship but not fully sunk
     for (let key in playerHitCounter) {
@@ -425,9 +425,54 @@ function aISelectShot() {
     }
 
     // if AI makes it here, each ship has been either untouched or fully sunk, randomly select any square available, hoping for a hit
-    randRow = Math.floor(Math.random()*aIShotsRemaining.length);
-    randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
-    return aIShotsRemaining[randRow][randCol];
+
+    let tempTransposed = new Array(10).fill().map(() => (new Array()));
+    for (let row of aIShotsRemaining) {
+        for (let element of row) {
+            tempTransposed[Number(element.name.match(/\d+/))-1].push(element);
+        }
+    }
+
+    console.log(tempTransposed);
+
+    function filterSaveLongest(longest, current){
+        if (longest[0].length < current.length) {
+            return [current]
+        } else if (longest[0].length === current.length) {
+            longest.push(current);
+            return longest;
+        } else {
+            return longest;
+        }
+    }
+
+    let reducedTransposed = tempTransposed.filter(e => (e.length > 0)).reduce(filterSaveLongest, [[]]);
+    let reduced = aIShotsRemaining.reduce(filterSaveLongest, [[]]);
+
+    // in case of equality randomly choose whether to focus on column or row
+    let randomArraySwitch;
+
+    if (reducedTransposed[0].length > reduced[0].length) {
+        randomArraySwitch = true;
+    } else if (reducedTransposed.length < reduced.length) {
+        randomArraySwitch = false;
+    } else {
+        randomArraySwitch = !!Math.floor(Math.random()*2);
+    }
+
+    
+    if (randomArraySwitch) {
+        let firstIndex = Math.floor(Math.random()*reducedTransposed.length);
+        let secondIndex = Math.floor(Math.random()*reducedTransposed[firstIndex].length);
+        return reducedTransposed[firstIndex][secondIndex];
+    } else {
+        let firstIndex = Math.floor(Math.random()*reduced.length);
+        let secondIndex = Math.floor(Math.random()*reduced[firstIndex].length);
+        return reduced[firstIndex][secondIndex];
+    }
+    // randRow = Math.floor(Math.random()*aIShotsRemaining.length);
+    // randCol = Math.floor(Math.random()*aIShotsRemaining[randRow].length);
+    // return aIShotsRemaining[randRow][randCol];
 }
 
 // generates a set around the square input (matches element.name of the board arrays)
