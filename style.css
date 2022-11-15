@@ -54,7 +54,7 @@ main > div {
     font-size: 1.5vmin;
 }
 
-span {
+#score span {
     font-weight: 900;
 }
 
@@ -361,6 +361,6 @@ button {
     background-image: url('./imgs/cruisercropped.png');
 }
 
-.rotated {
+.rotated{
     transform: rotate(90deg);
 }
