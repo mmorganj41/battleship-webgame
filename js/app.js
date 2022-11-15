@@ -78,6 +78,10 @@ let draggedElement;
 let firingSquare;
 let aIShotsRemaining;
 let lastAIAction;
+let gameOver;
+let turnCount;
+let playerWins = 0;
+let computerWins = 0;
 
 
 /* ----- Cached elements ----- */
@@ -101,6 +105,7 @@ const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
 const resetButtonEl = document.getElementById('reset');
 const playerTurnEl = document.getElementById('playerturn');
 const computerTurnEl = document.getElementById('computerturn');
+const countdownEl = document.getElementById('countdown');
 
 // Adding drag events
 
@@ -177,9 +182,16 @@ computerBoardEl.forEach(e => e.addEventListener('click', event => {
 
 fireButtonEl.addEventListener('click', event => {
     // if game is still in setup and all ships are on the board start the game
+    if (gameOver) {
+        message = 'Game is over, press reset to play again!'
+        return;
+    }
+
     if (Object.values(placements).every(e => e === true) && setup) {
         setup = false;
         message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
+    } else if (setup) {
+        message = 'Place all your pieces by interacting with the bottom panel. Drag to board to set. Click the arrow to change orientation. Click on the ships to remove from board.'
     }
 
     // act as confirmation for shot if it's players turn
@@ -191,6 +203,7 @@ fireButtonEl.addEventListener('click', event => {
             message = 'Choose a new square';
         } else {
             value.hit = true;
+            playerTurn = false;
             if (value.ship !== null) {
                 message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
                 computerHitCounter[value.ship]++
@@ -202,6 +215,22 @@ fireButtonEl.addEventListener('click', event => {
     }
 
     render();
+
+    if (!playerTurn && !setup) {
+        let delay = 3;
+        const countdown = setInterval(function() {
+            if (delay <= 0) {
+                aIFireShot();
+                playerTurn = true;
+                render();
+                clearInterval(countdown)    
+            }
+            countdownEl.innerText = delay;
+            delay--;
+        }, 1000);
+        if (delay < 1) {}
+        
+    }    
 })
 
 
@@ -372,7 +401,7 @@ function aIFireShot() {
 // ai helper function for choosing shots
 function aISelectShot() {
     // let randRow, randCol;
-    let shortestStretch;
+    let stretch;
     
     // check if the computer has hit each ship but not fully sunk
     for (let key in playerHitCounter) {
@@ -424,8 +453,8 @@ function aISelectShot() {
 
             // track shortest available ship to sink
         } else if (playerHitCounter[key].length === 0) {
-            if (shortestStretch === undefined || shipLengths.get(key) < shortestStretch) {
-                shortestStretch = shipLengths.get(key);
+            if (stretch === undefined || shipLengths.get(key) > stretch) {
+                stretch = shipLengths.get(key);
             }
         }
     }
@@ -441,14 +470,14 @@ function aISelectShot() {
         }
     }
 
-
-    function concatenateStretches(arr, stretch = 0) {
+    function concatenateStretches(arr, stretch = 1) {
         const concatenatedArray = new Array(10).fill().map(() => (new Array()));
 
         for (i=0; i<arr.length; i++) {
 
             for (j=0; j<arr[i].length-stretch+1;j++) {
 
+                if (stretch < 2) return concatenatedArray;
                 // push stretches to new array - duplicates intended to maximize chance - works on both transposed and regular array
                 if (arr[i][j].name[0] === arr[i][j+1].name[0]) {
 
@@ -456,7 +485,7 @@ function aISelectShot() {
                         concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
                     }
 
-                } else {
+                } else if (Number(arr[i][j].name.match(/\d+/)) === Number(arr[i][j+1].name.match(/\d+/))){
 
                     if (String.fromCharCode(arr[i][j].name.charCodeAt(0)+stretch-1) === arr[i][j+stretch-1].name[0]) {
                         concatenatedArray[i].push(...arr[i].slice(j, j+stretch));
@@ -482,8 +511,8 @@ function aISelectShot() {
     }
 
 
-    let stretchedTransposed = concatenateStretches(tempTransposed, shortestStretch).reduce(filterSaveLongest, [[]]);
-    let stretched = concatenateStretches(aIShotsRemaining, shortestStretch).reduce(filterSaveLongest, [[]]);;
+    let stretchedTransposed = concatenateStretches(tempTransposed, stretch).reduce(filterSaveLongest, [[]]);
+    let stretched = concatenateStretches(aIShotsRemaining, stretch).reduce(filterSaveLongest, [[]]);;
 
 
     if (stretchedTransposed[0].length > stretched[0].length) {
@@ -601,8 +630,8 @@ init();
 function init(){
     
     setup = true;
-
-    lastAIAction = null;
+    gameOver = false;
+    turnCount = 0;
 
     // clear placement object
     for (placed in placements) {
@@ -646,11 +675,9 @@ function init(){
         }
     }
 
-    removeFromSelectionArray(playerHitCounter['cruiser'][0]);
-    removeFromSelectionArray(playerHitCounter['cruiser'][1]);
-
     // clear firing square
     firingSquare = null;
+    lastAIAction = null;
 
     // update model
     render();

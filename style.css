@@ -37,6 +37,11 @@ main {
     color: white;
 }
 
+#message {
+    text-align: center;
+    padding: 5px;
+}
+
 main > div {
     display: grid;
     grid-template-columns: 110px 500px 50px 500px 110px;
