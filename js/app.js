@@ -86,6 +86,8 @@ let turnCount; // What is the turn number?
 let playerWins = 0; // How many times has the player won
 let computerWins = 0; // How many times has the computer won
 let haltMoves = false; // Boolean to stop player from firing
+let missCount;
+let hardmode;
 
 
 /* ----- Cached elements ----- */
@@ -115,6 +117,7 @@ const countdownEl = document.getElementById('countdown');
 const turnCountEl = document.querySelector('#turn span');
 const playerWinsEl = document.querySelector('#playerwin span');
 const computerWinsEl = document.querySelector('#computerwin span');
+const hardmodeCheckBox = document.getElementById('hardmode');
 
 // Adding drag events so the player can move ships onto the board
 
@@ -191,6 +194,11 @@ bodyEl.addEventListener('keyup', (event) => {
     } else if (event.code === "KeyR") {
         init();
     }
+})
+
+// Hardmode activated with checkbox;
+hardmodeCheckBox.addEventListener('click', event => {
+    hardmode = event.target.checked;
 })
 
 
@@ -299,6 +307,15 @@ function fire(){
 function findfromName(arr, name) {
     for (let i = 0; i < arr.length; i++) {
         let value = arr[i].find(e => e.name === name);
+        if (value !== undefined) {
+            return value;
+        }
+    }
+}
+
+function findShipNotHit(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        let value = arr[i].find(e => e.ship !== null && e.hit === false);
         if (value !== undefined) {
             return value;
         }
@@ -433,10 +450,12 @@ function aIFireShot() {
         hitSound.play()
         message = `The computer hit your ${chosenShot.ship} at ${chosenShot.name}.`
         playerHitCounter[chosenShot.ship].push(chosenShot);
+        missCount = 0;
         
     } else {
         missSound.play()
         message = `The computer chose ${chosenShot.name} and missed.`
+        missCount++;
         
     }
 
@@ -501,6 +520,14 @@ function aISelectShot() {
             if (stretch === undefined || shipLengths.get(key) > stretch) {
                 stretch = shipLengths.get(key);
             }
+        }
+    }
+
+    // HARDMODE
+    if (hardmode) {
+        if (missCount > 7) {
+            let shot = findShipNotHit(playerBoard);
+            if (shot) return shot;
         }
     }
 
@@ -719,6 +746,8 @@ function init(){
     firingSquare = null;
     lastAIAction = null;
 
+    missCount = 0; // for hardmode
+
     // update model
     render();
 }
@@ -761,6 +790,12 @@ function render(){
 
     playerWinsEl.innerText = playerWins;
     computerWinsEl.innerText = computerWins;
+
+    if (!setup) {
+        hardmodeCheckBox.disabled = true;
+    } else {
+        hardmodeCheckBox.disabled = false;
+    }
 }
 
 // function for rendering a board given an array, can set ships to render or not
