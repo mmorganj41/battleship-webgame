@@ -179,7 +179,7 @@ orientationIconEl.addEventListener('click', (event) => {
 computerBoardEl.addEventListener('click', event => {
     // set firing square to the id of target div
     firingSquare = event.target.id;
-    console.dir(firingSquare)
+
     render();
 });
 
@@ -257,6 +257,8 @@ function fire(){
     render();
 
     if (!playerTurn && !setup && !gameOver) {
+
+        // add a countdown timer to give space between human and computer actions
         let delay = 3;
         haltMoves = true;
         const countdown = setInterval(function() {
@@ -396,20 +398,6 @@ function removeShip(event, board) {
 // place AI ships function
 function placeAIShips() {
     
-    // for future use if want to optimize randomization 
-    // const availableSquaresOrient = computerBoard.map((row, i) => {
-    //     return (row.map((element, j) => {
-    //         return [i, j];
-    //     }))
-    // })
-
-    
-    // const availableSquaresNorm = computerBoard.map((col, i) => {
-    //     return (col.map((element, j) => {
-    //         return [j, i];
-    //     }))
-    // })
-
     for (let [key, value] of shipLengths) {
         while (true) {
             let row;
@@ -528,6 +516,7 @@ function aISelectShot() {
         }
     }
 
+    // create new arrays only containing elements with consecutive board elements at least as long as the stretch variable.
     function concatenateStretches(arr, stretch = 1) {
         const concatenatedArray = new Array(10).fill().map(() => (new Array()));
 
@@ -557,6 +546,7 @@ function aISelectShot() {
         return concatenatedArray.filter(e => (e) && e.length > 0);
     }
 
+    // reduction function to remove all save the longest nested arrays, to increase odds of hitting a shit
     function filterSaveLongest(longest, current){
         if (longest[0].length < current.length) {
             return [current]
@@ -573,6 +563,7 @@ function aISelectShot() {
     let stretched = concatenateStretches(aIShotsRemaining, stretch).reduce(filterSaveLongest, [[]]);;
 
 
+    // Check if rows or if columns have the longest stretch, if both are equally randomly choose between them;
     if (stretchedTransposed[0].length > stretched[0].length) {
         randomArraySwitch = true;
     } else if (stretchedTransposed[0].length < stretched[0].length) {
@@ -581,7 +572,7 @@ function aISelectShot() {
         randomArraySwitch = !!Math.floor(Math.random()*2);
     }
 
-
+    // return a shot element 
     if (randomArraySwitch) {
         let firstIndex = Math.floor(Math.random()*stretchedTransposed.length);
         let secondIndex = Math.floor(Math.random()*stretchedTransposed[firstIndex].length);
@@ -744,6 +735,27 @@ function init(){
     render();
 }
 
+// Render board elements:
+/*  
+    Message
+    Scoreboard
+        Turn
+        Player Wins
+        Computer Wins
+    Boards
+        Player ship locations
+        Both hit locations
+        Hit indicators
+        Hit notification
+    Countdown
+    Turn
+    Ships
+        Hit
+        Sunk
+    Ship Orientation
+ */
+
+
 function render(){
     
     renderTurn();
@@ -763,8 +775,9 @@ function render(){
     computerWinsEl.innerText = computerWins;
 }
 
-// function for rendering a board given an array
+// function for rendering a board given an array, can set ships to render or not
 function renderBoardEls(array, boardEl, renderShips=true) {
+    // initiate variables, shipIterator used for checking for rotation or how many squares have been found so far
     let node = 0;
     let shipIterator = {
         destroyer: [1, true],
@@ -773,8 +786,11 @@ function renderBoardEls(array, boardEl, renderShips=true) {
         battleship: [1, true],
         carrier: [1, true],
     }
+
+    // array for asigning images to pictures based on number
     let namingArray = {'half': 2, 'third': 3, 'fourth': 4, 'fifth': 5};
 
+    // only need to check rotation if rendering ship
     if (renderShips) {
         array.forEach(row => {
             let previousElement;
@@ -791,6 +807,8 @@ function renderBoardEls(array, boardEl, renderShips=true) {
 
     array.forEach(row => {
         row.forEach(element => {
+
+            // remove classes from shipless squares
             if (element.ship === null) {
                 boardEl.children[node].classList.remove('hittable');
                 boardEl.children[node].classList.remove('rotated');
@@ -803,6 +821,8 @@ function renderBoardEls(array, boardEl, renderShips=true) {
                 }
             } else {
                 boardEl.children[node].classList.add('hittable');
+
+                // assign classes for ship images and add a rotation if rendering ship
                 if (renderShips) {
                     switch (element.ship) {
                         case 'destroyer':
@@ -833,6 +853,8 @@ function renderBoardEls(array, boardEl, renderShips=true) {
                     }
                 }
             }
+
+            // add or remove hit markers from squares
             if (element.hit === false) {
                 boardEl.children[node].classList.remove('hit');
                 boardEl.children[node].classList.remove('miss');
@@ -843,7 +865,7 @@ function renderBoardEls(array, boardEl, renderShips=true) {
                     boardEl.children[node].classList.add('miss');
                 }
             }
-            // render firing square
+            // render firing selection square from previous turn
             if (boardEl.children[node].id === firingSquare) {
                 boardEl.children[node].classList.add('firingsquare');
             } else if (boardEl.children[node].id === lastAIAction) {
@@ -899,23 +921,3 @@ function renderHitTrack() {
         }
     }
 }
-
-// Render board elements:
-/*  
-    Message
-    Scoreboard
-        Turn
-        Player Wins
-        Computer Wins
-    Boards
-        Player ship locations
-        Both hit locations
-        Hit indicators
-        Hit notification
-    Countdown
-    Turn
-    Ships
-        Hit
-        Sunk
-    Ship Orientation
- */
