@@ -1,5 +1,8 @@
 /* ----- Constants ----- */
-// Countdown
+// Countdown changeable in console if necessary
+let countdownAmount = 3;
+let computerShipVisibility = false;
+
 // Player and computer arrays with objects indicating hit locations
 const playerBoard = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
     return {name: null, hit: false, ship: null}
@@ -28,7 +31,7 @@ for (let i = 0; i<computerBoard.length; i++) {
 const missSound = new Audio('audio/miss.mp3');
 const hitSound = new Audio('audio/hit.mp3');
 
-// placement object
+// placement object indicating which of the player ships have been placed on board
 
 const placements = {
     carrier: false,
@@ -38,7 +41,9 @@ const placements = {
     cruiser: false,
 }
 
-// player and computer ship hit counter
+// player and computer ship hit counter - objects containg: 
+// an array of the square objects for player to additionally assist with targetting
+// or a tracking number for computers simply to show hit indicators on the bottom of the screen.
 
 const playerHitCounter = {
     carrier: [],
@@ -56,7 +61,7 @@ const computerHitCounter = {
     cruiser: 0,
 }
 
-// length definitions
+// length definitions, each ship takes up this many squares
 const shipLengths = new Map();
 
 shipLengths.set('destroyer', 2);
@@ -67,25 +72,20 @@ shipLengths.set('carrier', 5);
 
 
 /* ----- States ----- */
-// Turn switch and turn #
-// Hit counter
-// Ship placements
-// Setup or play bool
-// Ship orientation bool
 
-let playerTurn;
-let setup;
-let message;
-let orient = false;
-let draggedElement;
-let firingSquare;
-let aIShotsRemaining;
-let lastAIAction;
-let gameOver;
-let turnCount;
-let playerWins = 0;
-let computerWins = 0;
-let haltMoves = false;
+let playerTurn; // Is it the player's turn?
+let setup; // Is it setup or game time?
+let message; // What message is being shown to players?
+let orient = false; // Will player's ships be oriented vertically or horizontally after bveing dragged;
+let draggedElement; // What element (ship) is currently being dragged;
+let firingSquare; // Which square will the player fire into
+let aIShotsRemaining; // Array containing all the remaining squares that the AI can shoot into
+let lastAIAction; //Where did the AI fire into last
+let gameOver; //Is the game over?
+let turnCount; // What is the turn number?
+let playerWins = 0; // How many times has the player won
+let computerWins = 0; // How many times has the computer won
+let haltMoves = false; // Boolean to stop player from firing
 
 
 /* ----- Cached elements ----- */
@@ -98,6 +98,7 @@ let haltMoves = false;
 // Fire button
 // Reset Button
 // Turn indicator
+
 
 const bodyEl = document.querySelector('body');
 const playerBoardEl = document.getElementById('playerboard');
@@ -115,7 +116,7 @@ const turnCountEl = document.querySelector('#turn span');
 const playerWinsEl = document.querySelector('#playerwin span');
 const computerWinsEl = document.querySelector('#computerwin span');
 
-// Adding drag events
+// Adding drag events so the player can move ships onto the board
 
 playerShipEls.addEventListener('dragstart', (event) => {
     event.target.classList.add("dragging");
@@ -166,7 +167,7 @@ playerShipEls.addEventListener('click', (event) => {
     render();
 })
 
-// rotate orientation by clicking
+// rotate orientation by clicking the orientation icon
 
 orientationIconEl.addEventListener('click', (event) => {
     event.target.classList.toggle('fa-rotate-90');
@@ -175,7 +176,6 @@ orientationIconEl.addEventListener('click', (event) => {
 
 // FIRING!!!
 
-// improve efficiency: forEach -> parent div
 computerBoardEl.addEventListener('click', event => {
     // set firing square to the id of target div
     firingSquare = event.target.id;
@@ -195,10 +195,8 @@ bodyEl.addEventListener('keyup', (event) => {
 
 
 /* ----- Callback Functions ------ */
-// Placement of player ships
-// Ship orientation button changer
-// Selection of square to fire upon
-// Firer button function - checks if square has ship and if true updates the ships on bottom
+
+// Function for firing, includes player and computer move actions
 
 function fire(){
     // ensure the computer has moved
@@ -227,18 +225,18 @@ function fire(){
 
     // act as confirmation for shot if it's players turn
     if (playerTurn && !setup) {
-        let value = findfromName(computerBoard, firingSquare);
-        if (value === undefined) {
+        let chosenSquare = findfromName(computerBoard, firingSquare);
+        if (chosenSquare === undefined) {
             message = 'Select a valid square';
-        } else if (value.hit === true) {
+        } else if (chosenSquare.hit === true) {
             message = 'Choose a new square';
         } else {
-            value.hit = true;
+            chosenSquare.hit = true;
             playerTurn = false;
             turnCount++;
-            if (value.ship !== null) {
-                message = `${value.ship[0].toUpperCase() + value.ship.slice(1)}, hit!`
-                computerHitCounter[value.ship]++
+            if (chosenSquare.ship !== null) {
+                message = `${chosenSquare.ship[0].toUpperCase() + chosenSquare.ship.slice(1)}, hit!`
+                computerHitCounter[chosenSquare.ship]++
                 hitSound.play();
                 
                 if (Object.values(computerHitCounter).reduce((sum, element) => sum + element) >= 17) {
@@ -259,7 +257,7 @@ function fire(){
     if (!playerTurn && !setup && !gameOver) {
 
         // add a countdown timer to give space between human and computer actions
-        let delay = 3;
+        let delay = countdownAmount;
         haltMoves = true;
         const countdown = setInterval(function() {
             countdownEl.innerText = delay;
@@ -318,6 +316,7 @@ function getArrayCoordinates(element, array) {
 
 // Check to see if drag event can be dropped
 function canPlace(event, board, update = false) {
+    if (event.target.children.length > 50) return false;
     const [row, column] = getArrayCoordinates(event.target, board);
 
     // construct temp array to check for ships and edges easily
@@ -664,17 +663,6 @@ function removeFromSelectionArray(square) {
 
 /* ----- Main Functions ----- */
 
-// Inititalizes and resets game state
-// Updates scoreboard and message
-// Removes hit markers and previous ships
-// Assigns computer ships via randomization
-// Allows for placement of player ships
-// Forbids "firing" until all placement occurs
-// Randomly choose player turn order
-// Confirm with fire button (renamed confirm temporarily)
-
-init();
-
 // init function - initializes starting game state
 function init(){
     
@@ -761,7 +749,7 @@ function render(){
     renderTurn();
 
     renderBoardEls(playerBoard, playerBoardEl);
-    renderBoardEls(computerBoard, computerBoardEl, false);
+    renderBoardEls(computerBoard, computerBoardEl, computerShipVisibility);
 
     renderHitTrack();
     
@@ -851,6 +839,16 @@ function renderBoardEls(array, boardEl, renderShips=true) {
                     if (shipIterator[element.ship][1]) {
                         boardEl.children[node].classList.add('rotated');     
                     }
+                } else {
+                    boardEl.children[node].classList.remove('hittable');
+                    boardEl.children[node].classList.remove('rotated');
+                    boardEl.children[node].classList.remove('sub');
+                    boardEl.children[node].classList.remove('cruise');
+                    for (let partOne in namingArray) {
+                        for (i=1; i<=namingArray[partOne]; i++) {
+                            boardEl.children[node].classList.remove(`${partOne}${i}`);
+                        }
+                    }
                 }
             }
 
@@ -921,3 +919,5 @@ function renderHitTrack() {
         }
     }
 }
+
+init();
