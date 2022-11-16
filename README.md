@@ -1,5 +1,3 @@
-# battleship-webgame
-
 # Battleship
 
 ##### Game involves two players, each with their own board of 10x10 squares, and try to sink all of their opponent's ships by choosing a random square, which are hidden from the enemy.
