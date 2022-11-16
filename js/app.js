@@ -840,7 +840,6 @@ function renderBoardEls(array, boardEl, renderShips=true) {
                         boardEl.children[node].classList.add('rotated');     
                     }
                 } else {
-                    boardEl.children[node].classList.remove('hittable');
                     boardEl.children[node].classList.remove('rotated');
                     boardEl.children[node].classList.remove('sub');
                     boardEl.children[node].classList.remove('cruise');
