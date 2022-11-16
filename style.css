@@ -408,3 +408,7 @@ button {
 .rotated{
     transform: rotate(90deg);
 }
+
+.hardmode {
+    grid-column-start: 4;
+}
