@@ -100,8 +100,8 @@ let haltMoves = false;
 // Turn indicator
 
 const bodyEl = document.querySelector('body');
-const playerBoardEl = document.querySelectorAll('#playerboard > div');
-const computerBoardEl = document.querySelectorAll('#computerboard > div');
+const playerBoardEl = document.getElementById('playerboard');
+const computerBoardEl = document.getElementById('computerboard');
 const playerShipEls = document.getElementById('playerships');
 const computerShipEls = document.getElementById('computerships');
 const messageEl = document.getElementById('message');
@@ -127,38 +127,32 @@ playerShipEls.addEventListener('dragend', (event) => {
     draggedElement = undefined;
 })
 
-playerBoardEl.forEach(element => {
-    element.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        if (placements[draggedElement] === true) return;
-        if (canPlace(event, playerBoard)) {
-            event.target.classList.add("filling");
-        } else {
-            event.target.classList.add("cantfill");
-        }
-    });
+playerBoardEl.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    if (placements[draggedElement] === true) return;
+    if (canPlace(event, playerBoard)) {
+        event.target.classList.add("filling");
+    } else {
+        event.target.classList.add("cantfill");
+    }
 });
 
-playerBoardEl.forEach(element => {
-    element.addEventListener("dragleave", (event) => {
-        if (placements[draggedElement] === true) return;
-        event.target.classList.remove("filling");
-        event.target.classList.remove("cantfill")
-    });
-})
+playerBoardEl.addEventListener("dragleave", (event) => {
+    if (placements[draggedElement] === true) return;
+    event.target.classList.remove("filling");
+    event.target.classList.remove("cantfill")
+});
 
-playerBoardEl.forEach(element => {
-    element.addEventListener("drop", (event) => {
-        if (placements[draggedElement] === true) return;
-        event.target.classList.remove("filling");
-        event.target.classList.remove("cantfill")
-        if (canPlace(event, playerBoard, true)) {
-            updatePlacement();
-            // if (Object.values(placements).every(e => e === true)) setup = false;
-            render();
-        }
-    })
-})
+playerBoardEl.addEventListener("drop", (event) => {
+    if (placements[draggedElement] === true) return;
+    event.target.classList.remove("filling");
+    event.target.classList.remove("cantfill")
+    if (canPlace(event, playerBoard, true)) {
+        updatePlacement();
+        // if (Object.values(placements).every(e => e === true)) setup = false;
+        render();
+    }
+});
 
 // reset game with button
 
@@ -182,12 +176,12 @@ orientationIconEl.addEventListener('click', (event) => {
 // FIRING!!!
 
 // improve efficiency: forEach -> parent div
-computerBoardEl.forEach(e => e.addEventListener('click', event => {
+computerBoardEl.addEventListener('click', event => {
     // set firing square to the id of target div
     firingSquare = event.target.id;
     console.dir(firingSquare)
     render();
-}))
+});
 
 fireButtonEl.addEventListener('click', fire);
 
@@ -798,64 +792,64 @@ function renderBoardEls(array, boardEl, renderShips=true) {
     array.forEach(row => {
         row.forEach(element => {
             if (element.ship === null) {
-                boardEl[node].classList.remove('hittable');
-                boardEl[node].classList.remove('rotated');
-                boardEl[node].classList.remove('sub');
-                boardEl[node].classList.remove('cruise');
+                boardEl.children[node].classList.remove('hittable');
+                boardEl.children[node].classList.remove('rotated');
+                boardEl.children[node].classList.remove('sub');
+                boardEl.children[node].classList.remove('cruise');
                 for (let partOne in namingArray) {
                     for (i=1; i<=namingArray[partOne]; i++) {
-                        boardEl[node].classList.remove(`${partOne}${i}`);
+                        boardEl.children[node].classList.remove(`${partOne}${i}`);
                     }
                 }
             } else {
-                boardEl[node].classList.add('hittable');
+                boardEl.children[node].classList.add('hittable');
                 if (renderShips) {
                     switch (element.ship) {
                         case 'destroyer':
-                            boardEl[node].classList.add('half'+shipIterator[element.ship][0]);
+                            boardEl.children[node].classList.add('half'+shipIterator[element.ship][0]);
                             shipIterator[element.ship][0]++
                             break;
                         case 'cruiser':
-                            boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
-                            boardEl[node].classList.add('cruise');
+                            boardEl.children[node].classList.add('third'+shipIterator[element.ship][0]);
+                            boardEl.children[node].classList.add('cruise');
                             shipIterator[element.ship][0]++
                             break;
                         case 'submarine':
-                            boardEl[node].classList.add('third'+shipIterator[element.ship][0]);
-                            boardEl[node].classList.add('sub');
+                            boardEl.children[node].classList.add('third'+shipIterator[element.ship][0]);
+                            boardEl.children[node].classList.add('sub');
                             shipIterator[element.ship][0]++
                             break;
                         case 'battleship':
-                            boardEl[node].classList.add('fourth'+shipIterator[element.ship][0]);
+                            boardEl.children[node].classList.add('fourth'+shipIterator[element.ship][0]);
                             shipIterator[element.ship][0]++
                             break;
                         case 'carrier':
-                            boardEl[node].classList.add('fifth'+shipIterator[element.ship][0]);
+                            boardEl.children[node].classList.add('fifth'+shipIterator[element.ship][0]);
                             shipIterator[element.ship][0]++
                             break;
                     }
                     if (shipIterator[element.ship][1]) {
-                        boardEl[node].classList.add('rotated');     
+                        boardEl.children[node].classList.add('rotated');     
                     }
                 }
             }
             if (element.hit === false) {
-                boardEl[node].classList.remove('hit');
-                boardEl[node].classList.remove('miss');
+                boardEl.children[node].classList.remove('hit');
+                boardEl.children[node].classList.remove('miss');
             } else {
-                if (boardEl[node].classList.contains('hittable')) {
-                    boardEl[node].classList.add('hit');
+                if (boardEl.children[node].classList.contains('hittable')) {
+                    boardEl.children[node].classList.add('hit');
                 } else {
-                    boardEl[node].classList.add('miss');
+                    boardEl.children[node].classList.add('miss');
                 }
             }
             // render firing square
-            if (boardEl[node].id === firingSquare) {
-                boardEl[node].classList.add('firingsquare');
-            } else if (boardEl[node].id === lastAIAction) {
-                boardEl[node].classList.add('firingsquare');
+            if (boardEl.children[node].id === firingSquare) {
+                boardEl.children[node].classList.add('firingsquare');
+            } else if (boardEl.children[node].id === lastAIAction) {
+                boardEl.children[node].classList.add('firingsquare');
             } else {
-                boardEl[node].classList.remove('firingsquare');
+                boardEl.children[node].classList.remove('firingsquare');
             }
 
             node++;
