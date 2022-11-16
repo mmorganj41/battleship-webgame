@@ -76,9 +76,21 @@ main > div {
     grid-template-rows: repeat(10,  40px);
     grid-template-columns: repeat(10,  40px);
     background-image: url('./imgs/sea.jpg');
+    background-repeat: repeat;
+    background-position: 0 0;
     background-size: contain;
     border: black solid 5px;
+    animation: animatedBackground 1000s linear infinite;
 }
+
+@keyframes animatedBackground {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 10000px 0;
+    }
+  }
 
 .board > div {
     border: black solid 1px;
