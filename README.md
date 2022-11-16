@@ -2,17 +2,17 @@
 
 # Battleship
 
-###### Game involves two players, each with their own board of 10x10 squares, and try to sink all of their opponent's ships by choosing a random square, which are hidden from the enemy.
+##### Game involves two players, each with their own board of 10x10 squares, and try to sink all of their opponent's ships by choosing a random square, which are hidden from the enemy.
 
 ![Screenshot](/Screenshot.png)
 
-###### Technologies Used:
+##### Technologies Used:
 
 - HTML
 - CSS
 - Javascript
 
-###### Getting StarteD:
+##### Getting StarteD:
 
 On a new game, the player can drag each of their 5 ships (which can be rotated by clicking the orientation button). The computer will randomly generate ship locations which will be hidden from the player. The game can be started by pressing start after all ships have been placed.
 
@@ -26,7 +26,7 @@ The scoreboard on the side indicates turn # and whose turn it is along with play
 
 A reset button restarts the game. 
 
-###### Next Steps:
+##### Next Steps:
 
 - Difficulty Modes
 - Explosion Animation
