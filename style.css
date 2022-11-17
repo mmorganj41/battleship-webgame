@@ -38,19 +38,26 @@ main {
     color: white;
 }
 
-#message {
+.container {
     display: flex;
-    justify-content: center;
     padding: 20px;
     background-color: #000;
-    
+
     color: greenyellow;
     --messageborder: solid grey 5px;
     border-bottom: var(--messageborder);
     border-top: var(--messageborder);
     
     margin: 0% 0% 20px 0%;
+    width: 100%;
 }
+
+#message {
+    display: flex;
+
+    margin: auto;
+}
+
 
 h1 {
     display:inline;
@@ -64,6 +71,10 @@ h1 {
     animation: 
         typing 3s steps(40, end),
         typingline .5s step-end infinite;
+}
+
+h2 {
+    margin: 1vmin auto;
 }
 
 @keyframes typing {
@@ -106,8 +117,8 @@ main > div {
 
 .board {
     display: grid;
-    grid-template-rows: repeat(10,  40px);
-    grid-template-columns: repeat(10,  40px);
+    grid-template-rows: repeat(10,  5vmin);
+    grid-template-columns: repeat(10,  5vmin);
     background-image: url('./imgs/sea.jpg');
     background-repeat: repeat;
     background-position: 0 0;
@@ -165,8 +176,8 @@ main > div {
     border: black solid 1px;
     background-color: var(--accent-light);
     color: black;
-    padding: 2vmin;
-    margin: 2vmin;
+    padding: 1vmin;
+    margin-bottom: 1vmin;
     font-weight: 700;
     opacity: 0;
     text-align:center;
