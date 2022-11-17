@@ -156,7 +156,7 @@ playerBoardEl.addEventListener("drop", (event) => {
     event.target.classList.remove("cantfill")
     if (canPlace(event, playerBoard, true)) {
         updatePlacement();
-        // if (Object.values(placements).every(e => e === true)) setup = false;
+        
         render();
     }
 });
@@ -967,14 +967,14 @@ function renderHitTrack() {
 function renderWinLoss() {
     if (playerWon === true) {
         playerShipEls.classList.add('won');
-        resetButtonEl.classList.add('gameover');
+        resetButtonEl.classList.add('pressme');
     } else if (playerWon === false) {
         playerShipEls.classList.add('lost');
-        resetButtonEl.classList.add('gameover');
+        resetButtonEl.classList.add('pressme');
     } else {
         playerShipEls.classList.remove('lost');
         playerShipEls.classList.remove('won');
-        resetButtonEl.classList.remove('gameover');
+        resetButtonEl.classList.remove('pressme');
     }
 }
 
