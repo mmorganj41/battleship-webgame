@@ -218,8 +218,6 @@ function fire(){
     // ensure the computer has moved
     if (haltMoves) return;
 
-    fireButtonEl.classList.remove("pressme");
-
     missSound.pause();
     missSound.currentTime = 0;
     
