@@ -1,3 +1,5 @@
+// Testing
+
 /* ----- Constants ----- */
 // Countdown changeable in console if necessary
 let countdownAmount = 3;
