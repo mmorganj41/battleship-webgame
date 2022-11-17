@@ -26,7 +26,7 @@ A reset button restarts the game.
 
 ##### Next Steps:
 
-- Difficulty Modes
+- More Difficulty Modes
 - Explosion Animation
 - Complete hovered square displaying ship
 
