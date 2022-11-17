@@ -89,6 +89,7 @@ let haltMoves = false; // Boolean to stop player from firing
 let missCount;
 let hardmode;
 let lastMessage; // for checking if we need to reset animation;
+let playerWon;
 
 
 /* ----- Cached elements ----- */
@@ -252,6 +253,7 @@ function fire(){
                 if (Object.values(computerHitCounter).reduce((sum, element) => sum + element) >= 17) {
                     gameOver = true;
                     message = "You win. You sunk all of the enemy's ships.";
+                    playerWon = true;
                     playerWins++;
                 }
             } else {
@@ -288,6 +290,7 @@ function fire(){
                 if (Object.values(playerHitCounter).reduce((sum, element) => sum + element.length, 0) >= 17) {
                     gameOver = true;
                     message = 'You lose. The computer sunk all of your ships.';
+                    playerWon = false;
                     computerWins++;
                 } 
 
@@ -699,6 +702,7 @@ function init(){
     gameOver = false;
     turnCount = 0;
     haltMoves = false;
+    playerWon = undefined;
 
     // clear placement object
     for (placed in placements) {
@@ -800,6 +804,8 @@ function render(){
     } else {
         hardmodeCheckBox.disabled = false;
     }
+
+    renderWinLoss();
 }
 
 // function for rendering a board given an array, can set ships to render or not
@@ -955,6 +961,20 @@ function renderHitTrack() {
                 indicator.children[i].classList.add('damage');    
             }
         }
+    }
+}
+
+function renderWinLoss() {
+    if (playerWon === true) {
+        playerShipEls.classList.add('won');
+        resetButtonEl.classList.add('gameover');
+    } else if (playerWon === false) {
+        playerShipEls.classList.add('lost');
+        resetButtonEl.classList.add('gameover');
+    } else {
+        playerShipEls.classList.remove('lost');
+        playerShipEls.classList.remove('won');
+        resetButtonEl.classList.remove('gameover');
     }
 }
 

@@ -106,7 +106,6 @@ main > div {
 
 #score {
     font-size: 20px;
-    background-color: rgb(159, 159, 159);
     border-radius: 5px;
     border: black solid 5px;
     padding: 10px;
@@ -218,12 +217,12 @@ main > div {
     border-bottom-left-radius: 20px;
     border: black solid 5px;
     padding: 1.5vmin;
-    background: rgb(159, 159, 159);
     height: 15vmin;
+    min-height: 100px;
 }
 
 #orientation > * {
-    margin: 5px;
+    margin: 1vmin;
 }
 
 h4 {
@@ -239,8 +238,12 @@ h4 {
     align-content: space-between;
     height: 15vmin;
     border: solid black 5px;
-    background-color: grey;
     padding: 1vmin 0px;
+    
+}
+
+#playerships {
+    background-color: white;
 }
 
 .ship{
@@ -490,4 +493,34 @@ button:hover {
 
 .hardmode {
     grid-column-start: 4;
+}
+
+.lost {
+    --bordercolor: red;
+    border: var(--bordercolor) solid 5px;
+
+    animation: flashing 1s linear infinite;
+}
+
+.won {
+    --bordercolor: green;
+    border: var(--bordercolor) solid 5px;
+
+    animation: flashing 1s linear infinite;
+}
+
+.gameover {
+    --bordercolor: white;
+    border: var(--bordercolor) solid 5px;
+
+    animation: flashing 1s linear infinite;
+}
+
+@keyframes flashing {
+    from, to { 
+        border-color: transparent;
+    }
+    50% { 
+        border-color: var(--bordercolor);
+    }
 }
