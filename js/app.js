@@ -90,6 +90,7 @@ let missCount;
 let hardmode;
 let lastMessage; // for checking if we need to reset animation;
 let playerWon;
+let goTime;
 
 
 /* ----- Cached elements ----- */
@@ -120,6 +121,7 @@ const turnCountEl = document.querySelector('#turn span');
 const playerWinsEl = document.querySelector('#playerwin span');
 const computerWinsEl = document.querySelector('#computerwin span');
 const hardmodeCheckBox = document.getElementById('hardmode');
+const orientationEl = document.getElementById('orientation');
 
 // Adding drag events so the player can move ships onto the board
 
@@ -156,7 +158,10 @@ playerBoardEl.addEventListener("drop", (event) => {
     event.target.classList.remove("cantfill")
     if (canPlace(event, playerBoard, true)) {
         updatePlacement();
-        
+        if (Object.values(placements).every(e => e === true)) {
+            message = 'Press start to begin the game!'
+            goTime = true;
+        }
         render();
     }
 });
@@ -175,9 +180,9 @@ playerShipEls.addEventListener('click', (event) => {
 
 // rotate orientation by clicking the orientation icon
 
-orientationIconEl.addEventListener('click', (event) => {
-    event.target.classList.toggle('fa-rotate-90');
-    orient = (event.target.classList.contains('fa-rotate-90'));
+orientationEl.addEventListener('click', (event) => {
+    orientationIconEl.classList.toggle('fa-rotate-90');
+    orient = (orientationIconEl.classList.contains('fa-rotate-90'));
 })
 
 // FIRING!!!
@@ -213,6 +218,8 @@ function fire(){
     // ensure the computer has moved
     if (haltMoves) return;
 
+    fireButtonEl.classList.remove("pressme");
+
     missSound.pause();
     missSound.currentTime = 0;
     
@@ -229,6 +236,7 @@ function fire(){
     // if game is still in setup and all ships are on the board start the game
     if (Object.values(placements).every(e => e === true) && setup) {
         setup = false;
+        goTime = false;
         message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
     } else if (setup) {
         message = 'Place all your ships first.'
@@ -296,6 +304,7 @@ function fire(){
 
                 haltMoves = false;
                 countdownEl.innerText = '';
+
                 render();
                 
                 clearInterval(countdown)    
@@ -703,6 +712,7 @@ function init(){
     turnCount = 0;
     haltMoves = false;
     playerWon = undefined;
+    goTime = false;
 
     // clear placement object
     for (placed in placements) {
@@ -779,7 +789,7 @@ function init(){
  */
 
 
-function render(){
+function render() {
     
     renderTurn();
 
@@ -789,10 +799,6 @@ function render(){
     renderHitTrack();
     
     fireButtonEl.innerHTML = (setup) ? "Start" : "<u>F</u>IRE!";
-
-    messageEl.innerText = message;
-    if (message !== lastMessage) reset_animation();
-    lastMessage = message;
 
     turnCountEl.innerText = turnCount;
 
@@ -804,6 +810,28 @@ function render(){
     } else {
         hardmodeCheckBox.disabled = false;
     }
+    
+    if (!setup && playerTurn && firingSquare === null) {
+        computerBoardEl.classList.add('go')
+    } else {
+        computerBoardEl.classList.remove('go');
+    }
+
+    if (playerTurn && firingSquare !== null || goTime) {
+        fireButtonEl.classList.add('pressme');
+    } else {
+        fireButtonEl.classList.remove('pressme');
+    }
+
+    if (setup && Object.values(placements).some(e => e === false)) {
+        orientationEl.classList.add('orient');
+    } else {
+        orientationEl.classList.remove('orient');
+    }
+
+    messageEl.innerText = message;
+    if (message !== lastMessage) reset_animation();
+    lastMessage = message;
 
     renderWinLoss();
 }
