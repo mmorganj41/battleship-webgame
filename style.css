@@ -39,26 +39,10 @@ main {
     color: white;
 }
 
-.container {
-    display: flex;
-    padding: 20px;
-    background-color: #000;
-
-    color: greenyellow;
-    --messageborder: solid grey 5px;
-    border-bottom: var(--messageborder);
-    border-top: var(--messageborder);
-    
-    margin: 0% 0% 20px 0%;
-    width: 100%;
+button {
+    font-size: 3vmin;
+    font-weight: 900;
 }
-
-#message {
-    display: flex;
-
-    margin: auto;
-}
-
 
 h1 {
     display:inline;
@@ -78,22 +62,8 @@ h2 {
     margin: 1vmin auto;
 }
 
-@keyframes typing {
-    from { 
-        width: 0;
-    }
-    to { 
-        width: 100%;
-    }
-  }
-
-@keyframes typingline {
-    from, to { 
-        border-color: transparent;
-    }
-    50% { 
-        border-color: green;
-    }
+h4 {
+    font-size: 20px;
 }
 
 main > div {
@@ -104,15 +74,22 @@ main > div {
     justify-items: center;
 }
 
-#score {
-    font-size: 20px;
-    border-radius: 5px;
-    border: black solid 5px;
-    padding: 10px;
+button:hover {
+    transform: scale(1.05);
 }
 
-#score span {
-    font-weight: 900;
+.container {
+    display: flex;
+    padding: 20px;
+    background-color: #000;
+
+    color: greenyellow;
+    --messageborder: solid grey 5px;
+    border-bottom: var(--messageborder);
+    border-top: var(--messageborder);
+    
+    margin: 0% 0% 20px 0%;
+    width: 100%;
 }
 
 .board {
@@ -126,15 +103,6 @@ main > div {
     border: black solid 5px;
     animation: animatedBackground 1000s linear infinite;
 }
-
-@keyframes animatedBackground {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: 10000px 0;
-    }
-  }
 
 .board > div {
     border: black solid 1px;
@@ -150,6 +118,117 @@ main > div {
     -1px  1px 0 #000,
     -1px  0   0 #000;
     opacity: .75;
+}
+
+.turn {
+    border-radius: 5px;
+    border: black solid 1px;
+    background-color: var(--accent-light);
+    color: black;
+    padding: 1vmin;
+    margin-bottom: 1vmin;
+    font-weight: 700;
+    opacity: 0;
+    text-align:center;
+}
+
+.ships {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    align-content: space-between;
+    height: 15vmin;
+    border: solid black 5px;
+    padding: 1vmin 0px;
+    
+}
+
+.ship{
+    display: grid;
+    grid-template-rows: var(--boardsquaresize);
+    margin: 0px 1.5vmin 0px 1.5vmin;
+    border: solid black 2px;
+}
+
+.ship > div {
+    border: black solid 1px;
+    opacity: .5;
+}
+
+.carrier {
+    grid-template-columns: repeat(5, var(--boardsquaresize));
+}
+
+.battleship {
+    grid-template-columns: repeat(4,  var(--boardsquaresize));
+}
+
+.destroyer {
+    grid-template-columns: repeat(2,  var(--boardsquaresize));
+}
+
+.cruiser {
+    grid-template-columns: repeat(3,  var(--boardsquaresize));
+}
+
+.submarine {
+    grid-template-columns: repeat(3,  var(--boardsquaresize));
+}
+
+.countingdown {
+    border-radius: 50%;
+    border: solid 1vmin var(--accent-light);
+    background-color: #000;
+    color: lightgreen;
+}
+
+.dragging {
+    opacity: .5;
+}
+
+.filling {
+    opacity: .5;
+    background-color: blue;
+}
+
+.cantfill {
+    opacity: .5;
+    background-color: pink;
+}
+
+.miss {
+    background-color: white;
+    opacity: .5;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.rotated{
+    transform: rotate(90deg);
+}
+
+.hardmode {
+    grid-column-start: 4;
+}
+
+#message {
+    display: flex;
+
+    margin: auto;
+}
+
+#score {
+    font-size: 20px;
+    border-radius: 5px;
+    border: black solid 5px;
+    padding: 10px;
+}
+
+#score span {
+    font-weight: 900;
 }
 
 #computerboard > div:hover {
@@ -169,18 +248,6 @@ main > div {
     flex-direction: column;
     align-content: baseline;
     text-align: center;
-}
-
-.turn {
-    border-radius: 5px;
-    border: black solid 1px;
-    background-color: var(--accent-light);
-    color: black;
-    padding: 1vmin;
-    margin-bottom: 1vmin;
-    font-weight: 700;
-    opacity: 0;
-    text-align:center;
 }
 
 #fire {
@@ -225,33 +292,9 @@ main > div {
     margin: 1vmin;
 }
 
-h4 {
-    font-size: 20px;
-}
-
-
-.ships {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    align-content: space-between;
-    height: 15vmin;
-    border: solid black 5px;
-    padding: 1vmin 0px;
-    
-}
-
 #playerships {
     background-color: white;
 
-}
-
-.ship{
-    display: grid;
-    grid-template-rows: var(--boardsquaresize);
-    margin: 0px 1.5vmin 0px 1.5vmin;
-    border: solid black 2px;
 }
 
 #playerships > .ship {
@@ -270,73 +313,24 @@ h4 {
     transform: scale(1);
 }
 
-
-
-.ship > div {
-    border: black solid 1px;
-    opacity: .5;
-}
-
-.carrier {
-    grid-template-columns: repeat(5, var(--boardsquaresize));
-    
-}
-
 #playerships > .carrier {
     background-image: url('./imgs/carriercropped.png');
-}
-
-.battleship {
-    grid-template-columns: repeat(4,  var(--boardsquaresize));
 }
 
 #playerships > .battleship {
     background-image: url('./imgs/battleshipcropped.png');
 }
 
-.destroyer {
-    grid-template-columns: repeat(2,  var(--boardsquaresize));
-}
-
 #playerships > .destroyer {
     background-image: url('./imgs/destroyercropped.png');
-}
-
-.cruiser {
-    grid-template-columns: repeat(3,  var(--boardsquaresize));
 }
 
 #playerships > .cruiser {
     background-image: url('./imgs/cruisercropped.png');
 }
 
-.submarine {
-    grid-template-columns: repeat(3,  var(--boardsquaresize));
-}
-
 #playerships > .submarine {
     background-image: url('./imgs/submarinecropped.png');
-}
-
-.countingdown {
-    border-radius: 50%;
-    border: solid 1vmin var(--accent-light);
-    background-color: #000;
-    color: lightgreen;
-}
-
-.dragging {
-    opacity: .5;
-}
-
-.filling {
-    opacity: .5;
-    background-color: blue;
-}
-
-.cantfill {
-    opacity: .5;
-    background-color: pink;
 }
 
 #playerboard > .hittable {
@@ -350,20 +344,6 @@ h4 {
 
 #computerboard > .hit {
     box-shadow: inset 0 0 0 1000px rgba(255, 0, 0, 0.5);
-}
-
-.miss {
-    background-color: white;
-    opacity: .5;
-}
-
-button {
-    font-size: 3vmin;
-    font-weight: 900;
-}
-
-button:hover {
-    transform: scale(1.05);
 }
 
 #playerships > .placed {
@@ -380,14 +360,10 @@ button:hover {
     animation: animatedBackground 500s linear infinite;
 }
 
-
 #playerboard > .firingsquare {
     border: solid orange 2px;
 }
 
-.visible {
-    opacity: 1;
-}
 
 #playerships .damage {
     box-shadow: inset 0 0 0 1000px rgba(255, 0, 0, 0.5);
@@ -492,13 +468,7 @@ button:hover {
     background-image: url('./imgs/cruisercropped.png');
 }
 
-.rotated{
-    transform: rotate(90deg);
-}
-
-.hardmode {
-    grid-column-start: 4;
-}
+/* Animations states */
 
 .lost {
     --bordercolor: red;
@@ -532,6 +502,50 @@ button:hover {
     transform: scale(1.1);
 }
 
+.go {
+    --bordercolor: white;
+    animation: 
+        animatedBackground 1000s linear infinite,
+        flashing 1s linear infinite;
+}
+
+
+@keyframes animatedBackground {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 10000px 0;
+    }
+}
+
+@keyframes typing {
+    from { 
+        width: 0;
+    }
+    to { 
+        width: 100%;
+    }
+}
+
+@keyframes typingline {
+    from, to { 
+        border-color: transparent;
+    }
+    50% { 
+        border-color: green;
+    }
+}
+
+@keyframes hovertransform {
+    from {
+        transform : scale(1);
+    }
+    to {
+        transform: scale(var(--scaler));
+    } 
+}
+
 @keyframes flashing {
     from, to { 
         border-color: transparent;
@@ -550,9 +564,3 @@ button:hover {
     }
 }
 
-.go {
-    --bordercolor: white;
-    animation: 
-        animatedBackground 1000s linear infinite,
-        flashing 1s linear infinite;
-}
