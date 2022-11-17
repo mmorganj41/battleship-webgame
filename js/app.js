@@ -90,6 +90,7 @@ let computerWins = 0; // How many times has the computer won
 let haltMoves = false; // Boolean to stop player from firing
 let missCount;
 let hardmode;
+let lastMessage; // for checking if we need to reset animation;
 
 
 /* ----- Cached elements ----- */
@@ -109,7 +110,7 @@ const playerBoardEl = document.getElementById('playerboard');
 const computerBoardEl = document.getElementById('computerboard');
 const playerShipEls = document.getElementById('playerships');
 const computerShipEls = document.getElementById('computerships');
-const messageEl = document.getElementById('message');
+const messageEl = document.querySelector('h1')
 const fireButtonEl = document.getElementById('fire');
 const orientationIconEl = document.querySelector('.fa-arrow-circle-o-right');
 const resetButtonEl = document.getElementById('reset');
@@ -230,7 +231,7 @@ function fire(){
         setup = false;
         message = `${(playerTurn) ? 'Player' : 'Computer'} goes first!`
     } else if (setup) {
-        message = 'Place all your pieces by interacting with the bottom panel. Drag to board to set. Click the arrow to change orientation. Click on the ships to remove from board.'
+        message = 'Place all your ships first.'
     }
 
     // act as confirmation for shot if it's players turn
@@ -787,6 +788,8 @@ function render(){
     fireButtonEl.innerHTML = (setup) ? "Start" : "<u>F</u>IRE!";
 
     messageEl.innerText = message;
+    if (message !== lastMessage) reset_animation();
+    lastMessage = message;
 
     turnCountEl.innerText = turnCount;
 
@@ -955,5 +958,13 @@ function renderHitTrack() {
         }
     }
 }
+
+// reset message animation
+
+function reset_animation() {
+    messageEl.style.animation = 'none';
+    messageEl.offsetHeight;
+    messageEl.style.animation = null; 
+  }
 
 init();

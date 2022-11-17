@@ -10,8 +10,7 @@
 }
 
 :root {
-    --accent-dark: #3a54bb;
-    --accent-light: #d3e376;
+    --accent-light: greenyellow;
 }
 
 body {
@@ -24,8 +23,8 @@ body {
 header {
     font-size: 6vmin;
     padding: 1vmin;
-    background-color: var(--accent-dark);
-    color: white;
+    background-color: var(--accent-light);
+    color: black;
     text-align: center;
     letter-spacing: .5vmin;
 }
@@ -40,15 +39,49 @@ main {
 }
 
 #message {
-    text-align: center;
+    display: flex;
+    justify-content: center;
     padding: 20px;
     background-color: #000;
+    
     color: greenyellow;
     --messageborder: solid grey 5px;
     border-bottom: var(--messageborder);
     border-top: var(--messageborder);
-    width: 100%;
+    
     margin: 0% 0% 20px 0%;
+}
+
+h1 {
+    display:inline;
+    border-right: .15em green solid;
+    letter-spacing: .15em;
+    text-align: center;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+
+    animation: 
+        typing 3s steps(40, end),
+        typingline .5s step-end infinite;
+}
+
+@keyframes typing {
+    from { 
+        width: 0;
+    }
+    to { 
+        width: 100%;
+    }
+  }
+
+@keyframes typingline {
+    from, to { 
+        border-color: transparent;
+    }
+    50% { 
+        border-color: green;
+    }
 }
 
 main > div {
