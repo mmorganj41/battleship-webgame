@@ -183,6 +183,23 @@ main > div {
     text-align:center;
 }
 
+#fire {
+    background-color:rgba(255, 0, 0, 0.5);
+    padding: 2vmin;
+    font-size: 36px;
+    border-radius: 10px;
+    border: solid white 2px;
+}
+
+#fire:hover {
+    background-color:rgba(255, 49, 49, 0.5);
+    transform: scale(1.1);
+}
+
+#fire:active {
+    transform: scale(.9);
+}
+
 #playerinfo {
     grid-column-start: 2;
 }
@@ -328,6 +345,10 @@ h4 {
 button {
     font-size: 30px;
     font-weight: 900;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
 
 #playerships > .placed {
