@@ -713,6 +713,7 @@ function init(){
     haltMoves = false;
     playerWon = undefined;
     goTime = false;
+    hardmode = hardmodeCheckBox.checked;
 
     // clear placement object
     for (placed in placements) {
