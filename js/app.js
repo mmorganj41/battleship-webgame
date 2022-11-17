@@ -135,6 +135,7 @@ playerShipEls.addEventListener('dragend', (event) => {
 })
 
 playerBoardEl.addEventListener('dragover', (event) => {
+    if (event.target.classList.contains('board')) return;
     event.preventDefault();
     if (placements[draggedElement] === true) return;
     if (canPlace(event, playerBoard)) {
@@ -246,7 +247,7 @@ function fire(){
             playerTurn = false;
             turnCount++;
             if (chosenSquare.ship !== null) {
-                message = `${chosenSquare.ship[0].toUpperCase() + chosenSquare.ship.slice(1)}, hit!`
+                message = `${chosenSquare.ship[0].toUpperCase() + chosenSquare.ship.slice(1)} hit at ${chosenSquare.name.slice(1)}!`
                 computerHitCounter[chosenSquare.ship]++
                 hitSound.play();
                 
@@ -256,7 +257,7 @@ function fire(){
                     playerWins++;
                 }
             } else {
-                message = `Miss.`
+                message = `You chose ${chosenSquare.name.slice(1)}. Miss.`
                 missSound.play()
             }
         }
