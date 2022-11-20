@@ -125,46 +125,15 @@ const orientationEl = document.getElementById('orientation');
 
 // Adding drag events so the player can move ships onto the board
 
-playerShipEls.addEventListener('dragstart', (event) => {
-    event.target.classList.add("dragging");
-    draggedElement = event.target.classList[1];
-})
+playerShipEls.addEventListener('dragstart', addDraggingClass)
 
-playerShipEls.addEventListener('dragend', (event) => {
-    event.target.classList.remove("dragging");
-    draggedElement = undefined;
-})
+playerShipEls.addEventListener('dragend', removeDraggingClass)
 
-playerBoardEl.addEventListener('dragover', (event) => {
-    if (event.target.classList.contains('board')) return;
-    event.preventDefault();
-    if (placements[draggedElement] === true) return;
-    if (canPlace(event, playerBoard)) {
-        event.target.classList.add("filling");
-    } else {
-        event.target.classList.add("cantfill");
-    }
-});
+playerBoardEl.addEventListener('dragover', showCanPlace);
 
-playerBoardEl.addEventListener("dragleave", (event) => {
-    if (placements[draggedElement] === true) return;
-    event.target.classList.remove("filling");
-    event.target.classList.remove("cantfill")
-});
+playerBoardEl.addEventListener("dragleave", removeShowCanPlace);
 
-playerBoardEl.addEventListener("drop", (event) => {
-    if (placements[draggedElement] === true) return;
-    event.target.classList.remove("filling");
-    event.target.classList.remove("cantfill")
-    if (canPlace(event, playerBoard, true)) {
-        updatePlacement();
-        if (Object.values(placements).every(e => e === true)) {
-            message = 'Press start to begin the game!'
-            goTime = true;
-        }
-        render();
-    }
-});
+playerBoardEl.addEventListener("drop", dropShipOnBoard);
 
 // reset game with button
 
@@ -211,6 +180,57 @@ hardmodeCheckBox.addEventListener('click', event => {
 
 
 /* ----- Callback Functions ------ */
+
+// Visually represent that a ship is being dragged
+
+function addDraggingClass(event) {
+    event.target.classList.add("dragging");
+    draggedElement = event.target.classList[1];
+}
+
+// Remove visual dragging representation when it's no longer being dragged
+
+function removeDraggingClass(event) {
+    event.target.classList.remove("dragging");
+    draggedElement = undefined;
+}
+
+// Indicate whether a dragged ship can be placed in a square
+
+function showCanPlace(event) {
+    if (event.target.classList.contains('board')) return;
+    event.preventDefault();
+    if (placements[draggedElement] === true) return;
+    if (canPlace(event, playerBoard)) {
+        event.target.classList.add("filling");
+    } else {
+        event.target.classList.add("cantfill");
+    }
+}
+
+// Remove indication after dragged shipped leaves square
+
+function removeShowCanPlace(event) {
+    if (placements[draggedElement] === true) return;
+    event.target.classList.remove("filling");
+    event.target.classList.remove("cantfill")
+}
+
+// Update board object and visual representation to show ship on board when it's dropped somewhere that can fit the ship
+
+function dropShipOnBoard(event) {
+    if (placements[draggedElement] === true) return;
+    event.target.classList.remove("filling");
+    event.target.classList.remove("cantfill")
+    if (canPlace(event, playerBoard, true)) {
+        updatePlacement();
+        if (Object.values(placements).every(e => e === true)) {
+            message = 'Press start to begin the game!'
+            goTime = true;
+        }
+        render();
+    }
+}
 
 // Function for firing, includes player and computer move actions
 

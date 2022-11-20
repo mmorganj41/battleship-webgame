@@ -57,7 +57,7 @@ Feel free to select hardmode on the bottom right of the screen to play against a
 While the game is largely functional as it is, there remains further potential for polishing the design and generally improving the css, including:
 
 - Creating explosion, miss, and sinking animations
-- Modifying the dragging events to completely dispaly the ship on board
+- Modifying the dragging events to completely display the ship on board
 - Making css more sleek and modern
 
 ## Technologies Used:
