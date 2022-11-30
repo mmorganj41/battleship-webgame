@@ -4,28 +4,14 @@ let countdownAmount = 3;
 let computerShipVisibility = false;
 
 // Player and computer arrays with objects indicating hit locations
-const playerBoard = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
-    return {name: null, hit: false, ship: null}
+const playerBoard = new Array(10).fill().map((e, i) => (new Array(10).fill().map((e, j) => {
+    let letter = String.fromCharCode('a'.charCodeAt(0) + j);
+    return {name: letter+(i+1), hit: false, ship: null}
 })));
-const computerBoard = new Array(10).fill().map(() => (new Array(10).fill().map(() => {
-    return {name: null, hit: false, ship: null}
+const computerBoard = new Array(10).fill().map((e, i) => (new Array(10).fill().map((e, j) => {
+    let letter = String.fromCharCode('a'.charCodeAt(0) + j); 
+    return {name: 'c'+letter+(i+1), hit: false, ship: null}
 })));
-
-// Update naming for each object 
-
-for (let i = 0; i<playerBoard.length; i++) {
-    for (let j = 0; j<playerBoard[i].length; j++) {
-        let letter = String.fromCharCode('a'.charCodeAt(0) + j); 
-        playerBoard[i][j].name = letter+(i+1);
-    }
-}
-for (let i = 0; i<computerBoard.length; i++) {
-    
-    for (let j = 0; j<computerBoard[i].length; j++) {
-        let letter = String.fromCharCode('a'.charCodeAt(0) + j); 
-        computerBoard[i][j].name = 'c'+letter+(i+1);
-    }
-}
 
 // sounds
 const missSound = new Audio('audio/miss.mp3');
